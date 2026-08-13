@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1B3A57">
+<title>kariOrg · Karioli · S1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  :root{
+    --blue:       #1B3A57;
+    --blue-mid:   #2A5480;
+    --blue-light: #3A74A8;
+    --blue-pale:  rgba(27,58,87,0.08);
+    --white:      #FFFFFF;
+    --ghost:      rgba(255,255,255,0.85);
+    --fs-xl: 18px;
+    --fs-md: 15px;
+    --fs-sm: 12px;
+    --fs-xs: 10px;
+  }
+
+  body{background:#E8EEF4;display:flex;justify-content:center;padding:1.5rem 0 2rem;font-family:'DM Sans',sans-serif;}
+
+  /* ── PHONE SHELL ── */
+  .phone{
+    width:320px;
+    min-height:600px;
+    height:calc(100vh - 3rem);
+    max-height:700px;
+    background:linear-gradient(160deg,#1B3A57 0%,#2A5480 60%,#1B3A57 100%);
+    border-radius:40px;
+    padding:14px 14px 14px 14px;
+    border:3px solid #0E2236;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 16px 48px rgba(0,0,0,0.35);
+  }
+  .phone-notch{width:80px;height:10px;background:#0E2236;border-radius:8px;margin:0 auto 8px;}
+
+  /* ── STATUS BAR ── */
+  .status-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 2px;}
+  .status-left{display:flex;align-items:center;gap:6px;}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#4AE040;box-shadow:0 0 5px #4AE040;}
+  .status-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.6);letter-spacing:.1em;}
+  .status-time{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.5);letter-spacing:.06em;}
+
+  /* ── PRESET HEADER ── */
+  .preset-header{
+    text-align:center;
+    padding:4px 40px 8px;
+    flex-shrink:0;
+  }
+  .preset-name{
+    font-size:var(--fs-xl);font-weight:700;
+    color:#FFFFFF;letter-spacing:.04em;
+    line-height:1.2;
+  }
+  .preset-sub{
+    font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);color:rgba(255,255,255,0.45);
+    letter-spacing:.1em;margin-top:2px;
+  }
+
+  /* ── LEFT SIDEBAR — Panel-Tab ── */
+  .left-sidebar{
+    position:absolute;left:0;top:76px;
+    display:flex;flex-direction:column;
+    z-index:10;
+  }
+  .panel-tab{
+    width:34px;height:70px;
+    background:linear-gradient(135deg,#2A6AA8 0%,#1B3A57 60%,#0E2236 100%);
+    border-radius:0 8px 8px 0;
+    border-top:1px solid rgba(255,255,255,0.25);
+    border-right:2px solid rgba(255,255,255,0.15);
+    border-bottom:2px solid rgba(0,0,0,0.4);
+    box-shadow:3px 3px 8px rgba(0,0,0,0.45);
+    display:flex;align-items:center;justify-content:center;
+    font-size:var(--fs-xs);color:rgba(255,255,255,0.75);
+    writing-mode:vertical-rl;
+    font-family:'DM Mono',monospace;letter-spacing:.1em;
+    cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s;
+  }
+  .panel-tab:active{background:linear-gradient(135deg,#3A7AC0 0%,#2A5480 60%,#1B3A57 100%);}
+
+  /* ── LEFT PANEL (Slide-in) ── */
+  .left-panel{
+    position:absolute;left:0;top:76px;
+    width:170px;
+    background:rgba(255,255,255,0.97);
+    border-radius:0 14px 14px 0;
+    border:1px solid rgba(27,58,87,0.2);
+    border-left:none;
+    padding:12px 10px 12px 8px;
+    z-index:15;
+    display:none;
+    box-shadow:5px 4px 18px rgba(0,0,0,0.2);
+  }
+  .left-panel.open{display:block;}
+  .lp-title{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    letter-spacing:.12em;color:var(--blue);
+    margin-bottom:10px;text-transform:uppercase;
+  }
+  .lp-item{
+    background:#F0F4F8;border-radius:10px;
+    padding:10px 12px;margin-bottom:7px;
+    cursor:pointer;border:1px solid rgba(27,58,87,0.12);
+    transition:background .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .lp-item:active{background:#DDE6EF;}
+  .lp-item-name{font-size:var(--fs-sm);font-weight:600;color:var(--blue);}
+  .lp-item-sub{font-size:var(--fs-xs);color:rgba(27,58,87,0.55);margin-top:2px;font-family:'DM Mono',monospace;}
+  .lp-close{font-size:var(--fs-xs);color:rgba(27,58,87,0.45);cursor:pointer;text-align:right;margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:.08em;}
+
+  /* ── RIGHT SIDEBAR — Ghostbar ── */
+  .right-sidebar{
+    position:absolute;right:0;top:76px;
+    display:flex;flex-direction:column;gap:4px;
+    z-index:10;
+    opacity:1;
+    transition:opacity 0.6s ease;
+  }
+  .right-sidebar.hidden{opacity:0;pointer-events:none;}
+  .ghost-btn{
+    width:36px;height:46px;
+    background:rgba(255,255,255,0.18);
+    border-radius:8px 0 0 8px;
+    border:1px solid rgba(255,255,255,0.15);
+    border-right:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    cursor:pointer;
+    backdrop-filter:blur(6px);
+    transition:background .15s;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .ghost-btn:active{background:rgba(255,255,255,0.3);}
+  .ghost-icon{font-size:var(--fs-md);line-height:1;}
+  .ghost-label{font-size:var(--fs-xs);color:rgba(255,255,255,0.6);font-family:'DM Mono',monospace;letter-spacing:.04em;}
+
+  /* ── CONTENT AREA ── */
+  .content{margin:0 38px 0 36px;flex:1 1 0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+
+  /* ── MAIN SCANNER BUTTON ── */
+  .scanner-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .scanner-btn{
+    width:100px;height:100px;border-radius:50%;
+    background:linear-gradient(145deg,#FFFFFF 0%,#D8E8F4 100%);
+    border:3px solid rgba(255,255,255,0.4);
+    box-shadow:0 6px 24px rgba(0,0,0,0.35),inset 0 1px 2px rgba(255,255,255,0.6);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    font-size:38px;line-height:1;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .12s,box-shadow .12s;
+  }
+  .scanner-btn:active{transform:scale(.95);box-shadow:0 3px 12px rgba(0,0,0,0.3),inset 0 1px 2px rgba(255,255,255,0.4);}
+
+  /* ── MIC / TEXT BUTTON ── */
+  .mic-btn{
+    display:flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.22);
+    border-radius:20px;
+    padding:7px 16px;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s;
+  }
+  .mic-btn:active{background:rgba(255,255,255,0.22);}
+  .mic-icon{font-size:var(--fs-md);}
+  .mic-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.65);letter-spacing:.1em;}
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar{display:flex;gap:4px;padding-top:10px;flex-shrink:0;}
+  .tab-btn{
+    flex:1;padding:10px 2px 9px;border-radius:14px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);font-weight:700;
+    cursor:pointer;text-align:center;line-height:1.2;
+    color:rgba(255,255,255,0.55);
+    background:rgba(255,255,255,0.07);
+    border-top:1px solid rgba(255,255,255,0.12);
+    border-left:1px solid rgba(255,255,255,0.08);
+    border-right:1px solid rgba(0,0,0,0.2);
+    border-bottom:4px solid rgba(0,0,0,0.3);
+    box-shadow:1px 4px 8px rgba(0,0,0,0.25);
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s,color .15s;
+  }
+  .tab-btn.active{
+    background:rgba(255,255,255,0.92);
+    color:var(--blue);
+  }
+  .tab-btn:active{opacity:.8;}
+  .tab-icon{font-size:var(--fs-md);display:block;margin-bottom:2px;}
+
+  /* ── THEMEN PANEL (Bottom-Tab-Inhalt) ── */
+  .screen{display:none;flex:1 1 0;min-height:0;width:100%;}
+  .screen.active{display:flex;flex-direction:column;}
+
+  .themen-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:8px;padding:4px 0;
+    overflow-y:auto;
+  }
+  .themen-card{
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:12px;
+    padding:12px 10px;
+    cursor:pointer;text-align:center;
+    transition:background .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .themen-card.active-preset{
+    background:rgba(255,255,255,0.88);
+    border-color:rgba(255,255,255,0.6);
+  }
+  .themen-card.active-preset .tc-name{color:var(--blue);}
+  .themen-card.active-preset .tc-icon{filter:none;}
+  .themen-card:active{background:rgba(255,255,255,0.22);}
+  .tc-icon{font-size:24px;display:block;margin-bottom:4px;}
+  .tc-name{font-size:var(--fs-sm);font-weight:600;color:rgba(255,255,255,0.85);}
+  .tc-count{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.4);margin-top:2px;}
+  .themen-card.active-preset .tc-count{color:rgba(27,58,87,0.45);}
+
+  /* ── KAMERA-SCREEN ── */
+  #kameraWrap{
+    position:relative;width:100%;flex:1 1 0;min-height:0;
+    overflow:hidden;border-radius:10px;background:#000;
+  }
+  #kameraVideo{
+    width:100%;height:100%;object-fit:cover;display:block;border-radius:10px;
+  }
+  #kameraCanvas{
+    position:absolute;inset:0;width:100%;height:100%;
+    border-radius:10px;display:none;
+  }
+  #kameraHint{
+    position:absolute;bottom:10px;left:0;right:0;
+    text-align:center;font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);color:rgba(255,255,255,0.6);
+    letter-spacing:.08em;pointer-events:none;
+  }
+  .marker-dot{
+    position:absolute;width:22px;height:22px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.9);
+    border:2px solid var(--blue);
+    box-shadow:0 0 0 3px rgba(27,58,87,0.35);
+    transform:translate(-50%,-50%);
+    display:none;pointer-events:none;
+    transition:transform .1s;
+  }
+
+  /* ── BENENNUNGS-MODAL ── */
+  .modal-overlay{
+    position:absolute;inset:0;z-index:50;
+    background:rgba(14,34,54,0.7);
+    display:none;align-items:center;justify-content:center;
+    border-radius:37px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:#FFFFFF;border-radius:16px;
+    padding:20px 18px 16px;width:220px;
+    box-shadow:0 8px 28px rgba(0,0,0,0.3);
+  }
+  .modal-title{
+    font-size:var(--fs-sm);font-weight:700;color:var(--blue);
+    margin-bottom:12px;letter-spacing:.04em;
+  }
+  .modal-input{
+    width:100%;border:1.5px solid rgba(27,58,87,0.25);
+    border-radius:8px;padding:9px 10px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);
+    color:var(--blue);outline:none;
+    transition:border-color .15s;
+  }
+  .modal-input:focus{border-color:var(--blue);}
+  .modal-buttons{display:flex;gap:8px;margin-top:12px;}
+  .modal-btn{
+    flex:1;padding:9px 0;border-radius:8px;
+    text-align:center;font-size:var(--fs-sm);font-weight:600;
+    cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:opacity .15s;
+  }
+  .modal-btn:active{opacity:.7;}
+  .modal-btn.secondary{background:#F0F4F8;color:var(--blue);}
+  .modal-btn.primary{background:var(--blue);color:#FFFFFF;}
+
+  /* Archiv Platzhalter */
+  .placeholder{
+    flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;
+    opacity:.35;
+  }
+  .ph-icon{font-size:36px;}
+  .ph-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:#FFFFFF;letter-spacing:.1em;}
+
+  /* ── LISTE-TAB ── */
+  .liste-header{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.4);letter-spacing:.12em;
+    padding:4px 2px 6px;flex-shrink:0;
+  }
+  .liste-scroll{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
+  .liste-leer{
+    flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;opacity:.35;
+  }
+  .liste-item{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:10px;padding:7px 10px;
+    cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s;
+    flex-shrink:0;
+  }
+  .liste-item:active{background:rgba(255,255,255,0.20);}
+  .liste-item.delete-mode{
+    background:rgba(200,40,40,0.25);
+    border-color:rgba(255,100,100,0.4);
+  }
+  .liste-thumb{
+    width:40px;height:40px;border-radius:7px;
+    object-fit:cover;flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.2);
+  }
+  .liste-info{flex:1;min-width:0;}
+  .liste-name{
+    font-size:var(--fs-sm);font-weight:600;
+    color:rgba(255,255,255,0.9);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .liste-datum{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.38);margin-top:2px;
+  }
+  .liste-del-btn{
+    background:rgba(220,50,50,0.85);color:#fff;
+    font-size:var(--fs-xs);font-weight:700;
+    border-radius:6px;padding:5px 8px;
+    cursor:pointer;flex-shrink:0;white-space:nowrap;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ── DETAIL-OVERLAY ── */
+  #detailOverlay{
+    position:absolute;inset:0;z-index:40;
+    background:#0E2236;border-radius:37px;
+    display:none;flex-direction:column;
+  }
+  #detailOverlay.open{display:flex;}
+  .detail-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 14px 6px;flex-shrink:0;
+  }
+  .detail-name{font-size:var(--fs-md);font-weight:700;color:#FFF;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .detail-close{font-size:var(--fs-md);color:rgba(255,255,255,0.5);cursor:pointer;padding:4px 6px;-webkit-tap-highlight-color:transparent;}
+  .detail-wrap{position:relative;flex:1 1 0;min-height:0;overflow:hidden;}
+  #detailImg{width:100%;height:100%;object-fit:contain;display:block;}
+  .detail-dot{
+    position:absolute;width:22px;height:22px;border-radius:50%;
+    background:rgba(255,255,255,0.9);border:2px solid var(--blue);
+    box-shadow:0 0 0 3px rgba(27,58,87,0.35);
+    transform:translate(-50%,-50%);pointer-events:none;
+  }
+  .detail-datum{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.35);text-align:center;padding:6px 0 10px;
+    flex-shrink:0;
+  }
+
+  /* ── SUCH-OVERLAY ── */
+  #suchOverlay{
+    position:absolute;inset:0;z-index:45;
+    background:rgba(14,34,54,0.97);border-radius:37px;
+    display:none;flex-direction:column;padding:14px;
+  }
+  #suchOverlay.open{display:flex;}
+  .such-bar{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-bottom:10px;}
+  .such-input{
+    flex:1;background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.22);border-radius:20px;
+    padding:9px 14px;font-family:'DM Sans',sans-serif;
+    font-size:var(--fs-sm);color:#FFF;outline:none;
+  }
+  .such-input::placeholder{color:rgba(255,255,255,0.35);}
+  .such-close{color:rgba(255,255,255,0.5);font-size:var(--fs-md);cursor:pointer;padding:4px 6px;-webkit-tap-highlight-color:transparent;}
+  .such-scope{display:flex;gap:6px;flex-shrink:0;margin-bottom:12px;}
+  .scope-btn{
+    flex:1;padding:7px 0;border-radius:12px;text-align:center;
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.08em;
+    color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;
+  }
+  .scope-btn.active{background:rgba(255,255,255,0.88);color:var(--blue);font-weight:700;}
+  .such-mic{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);
+    border-radius:20px;padding:8px 14px;cursor:pointer;flex-shrink:0;margin-bottom:14px;
+    -webkit-tap-highlight-color:transparent;transition:background .15s;
+  }
+  .such-mic:active,.such-mic.hoeren{background:rgba(255,80,80,0.25);border-color:rgba(255,100,100,0.5);}
+  .such-mic-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.6);letter-spacing:.1em;}
+  .such-ergebnis{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
+  .such-leer{flex:1;display:flex;align-items:center;justify-content:center;opacity:.35;}
+  .such-leer-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:#FFF;letter-spacing:.1em;}
+  .such-item{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.14);
+    border-radius:10px;padding:7px 10px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s;flex-shrink:0;
+  }
+  .such-item:active{background:rgba(255,255,255,0.20);}
+  .such-thumb{width:40px;height:40px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,0.2);}
+  .such-info{flex:1;min-width:0;}
+  .such-name{font-size:var(--fs-sm);font-weight:600;color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .such-meta{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);margin-top:2px;}
+
+  /* ── ZAHNRAD-BUTTON (fest, oberhalb Ghostbar) ── */
+  .zahnrad-btn{
+    position:absolute;right:0;top:40px;
+    width:36px;height:36px;
+    background:rgba(180,180,200,0.22);
+    border-radius:8px 0 0 8px;
+    border:1px solid rgba(255,255,255,0.18);
+    border-right:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:11;
+    backdrop-filter:blur(6px);
+    transition:background .15s;
+    user-select:none;-webkit-tap-highlight-color:transparent;
+    font-size:17px;
+  }
+  .zahnrad-btn:active{background:rgba(255,255,255,0.32);}
+
+  /* ── EINSTELLUNGS-OVERLAY ── */
+  #einstellOverlay{
+    position:absolute;inset:0;z-index:55;
+    background:rgba(10,26,42,0.97);border-radius:37px;
+    display:none;flex-direction:column;padding:18px 16px 16px;
+  }
+  #einstellOverlay.open{display:flex;}
+  .einstell-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    flex-shrink:0;margin-bottom:16px;
+  }
+  .einstell-title{
+    font-family:'DM Mono',monospace;font-size:var(--fs-sm);
+    color:rgba(255,255,255,0.85);letter-spacing:.12em;font-weight:600;
+  }
+  .einstell-close{
+    color:rgba(255,255,255,0.45);font-size:var(--fs-md);
+    cursor:pointer;padding:4px 6px;-webkit-tap-highlight-color:transparent;
+  }
+  .einstell-scroll{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+  .einstell-section{
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.11);
+    border-radius:12px;padding:12px 14px;
+  }
+  .einstell-section-title{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.38);letter-spacing:.14em;
+    margin-bottom:10px;text-transform:uppercase;
+  }
+  .einstell-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.07);
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  .einstell-row:last-child{border-bottom:none;}
+  .einstell-row-label{font-size:var(--fs-sm);color:rgba(255,255,255,0.75);}
+  .einstell-row-arrow{font-size:var(--fs-xs);color:rgba(255,255,255,0.28);}
+  .einstell-badge{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.35);margin-right:6px;
+  }
+
+  /* ── ARCHIV-TAB ── */
+  .archiv-bar{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-bottom:8px;}
+  .archiv-input{
+    flex:1;background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.22);border-radius:20px;
+    padding:8px 13px;font-family:'DM Sans',sans-serif;
+    font-size:var(--fs-sm);color:#FFF;outline:none;
+  }
+  .archiv-input::placeholder{color:rgba(255,255,255,0.32);}
+  .archiv-sort{display:flex;gap:4px;flex-shrink:0;margin-bottom:8px;}
+  .sort-btn{
+    flex:1;padding:5px 0;border-radius:10px;text-align:center;
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.06em;
+    color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.1);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;
+  }
+  .sort-btn.active{background:rgba(255,255,255,0.88);color:var(--blue);font-weight:700;}
+  .archiv-scroll{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
+  .archiv-leer{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:.35;}
+  .archiv-item{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.13);
+    border-radius:10px;padding:7px 10px;cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;transition:background .15s;flex-shrink:0;
+  }
+  .archiv-item:active{background:rgba(255,255,255,0.18);}
+  .archiv-thumb{width:40px;height:40px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,0.18);}
+  .archiv-info{flex:1;min-width:0;}
+  .archiv-name{font-size:var(--fs-sm);font-weight:600;color:rgba(255,255,255,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .archiv-meta{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.36);margin-top:2px;}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-left">
+      <div class="status-dot"></div>
+      <span class="status-label">KARIORG</span>
+    </div>
+    <span class="status-time">09:41</span>
+  </div>
+
+  <!-- PRESET HEADER -->
+  <div class="preset-header">
+    <div class="preset-name">Aquarium</div>
+    <div class="preset-sub">HAUSHALT · OBJEKT-PRESET</div>
+  </div>
+
+  <!-- LEFT SIDEBAR -->
+  <div class="left-sidebar">
+    <div class="panel-tab" id="panelTab">MENÜ</div>
+  </div>
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel" id="leftPanel">
+    <div class="lp-title">kariOrg</div>
+    <div class="lp-item">
+      <div class="lp-item-name">Modul</div>
+      <div class="lp-item-sub">Haushalt · aktiv</div>
+    </div>
+    <div class="lp-item">
+      <div class="lp-item-name">Presets</div>
+      <div class="lp-item-sub">Verwalten & anlegen</div>
+    </div>
+    <div class="lp-item">
+      <div class="lp-item-name">Forum</div>
+      <div class="lp-item-sub">Community · Hobby+</div>
+    </div>
+    <div class="lp-close" id="panelClose">✕ schließen</div>
+  </div>
+
+  <!-- ZAHNRAD — fest, immer sichtbar -->
+  <div class="zahnrad-btn" id="zahnradBtn">⚙️</div>
+
+  <!-- RIGHT SIDEBAR — Ghostbar -->
+  <div class="right-sidebar">
+    <div class="ghost-btn">
+      <span class="ghost-icon">📷</span>
+      <span class="ghost-label">lens</span>
+    </div>
+    <div class="ghost-btn">
+      <span class="ghost-icon">📎</span>
+      <span class="ghost-label">doc</span>
+    </div>
+  </div>
+
+  <!-- EINSTELLUNGS-OVERLAY -->
+  <div id="einstellOverlay">
+    <div class="einstell-bar">
+      <div class="einstell-title">⚙ EINSTELLUNGEN</div>
+      <div class="einstell-close" id="einstellClose">✕</div>
+    </div>
+    <div class="einstell-scroll">
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Profil</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Nutzer wechseln</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Modul</span>
+          <span><span class="einstell-badge">Haushalt</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Darstellung</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Design & Farbe</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Schrift & Größe</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Listen-Ansicht</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Ghostbar</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Buttons konfigurieren</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Über</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">kariOrg</span>
+          <span><span class="einstell-badge">v0.5</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Karioli · Haushalt-Modul</span>
+          <span class="einstell-row-arrow">›</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content">
+
+    <!-- HOME-Ansicht: Scanner + Mic -->
+    <div class="screen active" id="s-home">
+      <div class="scanner-wrap">
+        <div class="scanner-btn">📸</div>
+        <div class="mic-btn" id="suchOeffnen">
+          <span class="mic-icon">🎙️</span>
+          <span class="mic-label">Suche</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCH-OVERLAY -->
+    <div id="suchOverlay">
+      <div class="such-bar">
+        <input class="such-input" id="suchInput" type="text" placeholder="Suchen …" autocomplete="off"/>
+        <div class="such-close" id="suchClose">✕</div>
+      </div>
+      <div class="such-scope">
+        <div class="scope-btn active" id="scopePreset">Preset</div>
+        <div class="scope-btn" id="scopeGlobal">Global</div>
+      </div>
+      <div class="such-mic" id="suchMic">
+        <span style="font-size:var(--fs-md)">🎙️</span>
+        <span class="such-mic-label" id="suchMicLabel">Sprechen</span>
+      </div>
+      <div class="such-ergebnis" id="suchErgebnis">
+        <div class="such-leer" id="suchLeer">
+          <span class="such-leer-label">Kein Treffer</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KAMERA-Screen -->
+    <div class="screen" id="s-kamera">
+      <div id="kameraWrap">
+        <video id="kameraVideo" autoplay playsinline muted></video>
+        <canvas id="kameraCanvas"></canvas>
+        <div id="kameraHint">Antippen zum Markieren</div>
+        <div id="markerDot" class="marker-dot"></div>
+      </div>
+    </div>
+
+    <!-- THEMEN-Tab -->
+    <div class="screen" id="s-themen">
+      <div class="themen-grid">
+        <div class="themen-card active-preset">
+          <span class="tc-icon">🐠</span>
+          <div class="tc-name">Aquarium</div>
+          <div class="tc-count">12 Marker</div>
+        </div>
+        <div class="themen-card">
+          <span class="tc-icon">📦</span>
+          <div class="tc-name">Dachboden</div>
+          <div class="tc-count">7 Marker</div>
+        </div>
+        <div class="themen-card">
+          <span class="tc-icon">🏠</span>
+          <div class="tc-name">Keller</div>
+          <div class="tc-count">23 Marker</div>
+        </div>
+        <div class="themen-card">
+          <span class="tc-icon">🚐</span>
+          <div class="tc-name">Wohnmobil</div>
+          <div class="tc-count">5 Marker</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTE-Tab -->
+    <div class="screen" id="s-liste">
+      <div class="liste-header" id="listeHeader">MARKER · 0 Einträge</div>
+      <div class="liste-scroll" id="listeScroll">
+        <div class="liste-leer" id="listeLeer">
+          <span class="ph-icon">📋</span>
+          <span class="ph-label" style="opacity:1">Noch keine Marker</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL-OVERLAY -->
+    <div id="detailOverlay">
+      <div class="detail-bar">
+        <div class="detail-name" id="detailName"></div>
+        <div class="detail-close" id="detailClose">✕</div>
+      </div>
+      <div class="detail-wrap" id="detailWrap">
+        <img id="detailImg" src="" alt=""/>
+        <div class="detail-dot" id="detailDot"></div>
+      </div>
+      <div class="detail-datum" id="detailDatum"></div>
+    </div>
+
+    <!-- ARCHIV-Tab -->
+    <div class="screen" id="s-archiv">
+      <div class="archiv-bar">
+        <input class="archiv-input" id="archivInput" type="text" placeholder="Alles durchsuchen …" autocomplete="off"/>
+      </div>
+      <div class="archiv-sort">
+        <div class="sort-btn active" id="sortDatum">Datum</div>
+        <div class="sort-btn" id="sortOrt">Ort</div>
+        <div class="sort-btn" id="sortArt">Art</div>
+      </div>
+      <div class="archiv-scroll" id="archivScroll">
+        <div class="archiv-leer" id="archivLeer">
+          <span class="ph-icon">📖</span>
+          <span class="ph-label" style="opacity:1;font-family:'DM Mono',monospace;font-size:10px;color:#fff;letter-spacing:.1em;">Noch nichts archiviert</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BENENNUNGS-MODAL -->
+  <div id="benennModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">Marker benennen</div>
+      <input id="benennInput" class="modal-input" type="text" placeholder="z.B. Teddys …" autocomplete="off"/>
+      <div class="modal-buttons">
+        <div class="modal-btn secondary" id="benennAbbruch">Abbruch</div>
+        <div class="modal-btn primary" id="benennOk">Speichern</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="tab-btn active" id="tab-home" onclick="switchTab('home')">
+      <span class="tab-icon">🏠</span>Start
+    </div>
+    <div class="tab-btn" id="tab-themen" onclick="switchTab('themen')">
+      <span class="tab-icon">🗂️</span>Themen
+    </div>
+    <div class="tab-btn" id="tab-liste" onclick="switchTab('liste')">
+      <span class="tab-icon">📋</span>Liste
+    </div>
+    <div class="tab-btn" id="tab-archiv" onclick="switchTab('archiv')">
+      <span class="tab-icon">📖</span>Archiv
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Marker-Speicher mit localStorage (Scheibchen 6)
+  function ladeAusStorage(){
+    try{ return JSON.parse(localStorage.getItem('kariorg_marker') || '[]'); }
+    catch(e){ return []; }
+  }
+  function speichereInStorage(){
+    try{ localStorage.setItem('kariorg_marker', JSON.stringify(markerSpeicher)); }
+    catch(e){}
+  }
+  var markerSpeicher = ladeAusStorage();
+  var pendingMarker = null;
+
+  // ── Tab-Navigation
+  function switchTab(name){
+    ['home','themen','liste','archiv'].forEach(function(t){
+      document.getElementById('s-'+t).classList.toggle('active', t===name);
+      document.getElementById('tab-'+t).classList.toggle('active', t===name);
+    });
+  }
+
+  // ── Kamera starten
+  var stream = null;
+  var video  = document.getElementById('kameraVideo');
+  var canvas = document.getElementById('kameraCanvas');
+  var dot    = document.getElementById('markerDot');
+  var wrap   = document.getElementById('kameraWrap');
+
+  document.querySelector('.scanner-btn').addEventListener('click', function(){
+    document.getElementById('s-home').classList.remove('active');
+    document.getElementById('s-kamera').classList.add('active');
+    canvas.style.display = 'none';
+    dot.style.display    = 'none';
+    video.style.display  = 'block';
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+      .then(function(s){
+        stream = s;
+        video.srcObject = s;
+      })
+      .catch(function(){
+        document.getElementById('kameraHint').textContent = 'Kamera nicht verfügbar';
+      });
+  });
+
+  // ── Tap → Foto einfrieren + Marker setzen
+  wrap.addEventListener('click', function(e){
+    if(canvas.style.display === 'block') return; // bereits eingefroren
+    if(!stream) return;
+    var rect = wrap.getBoundingClientRect();
+    var xPx  = e.clientX - rect.left;
+    var yPx  = e.clientY - rect.top;
+    var xRel = xPx / rect.width;
+    var yRel = yPx / rect.height;
+
+    // Foto einfrieren
+    canvas.width  = wrap.offsetWidth;
+    canvas.height = wrap.offsetHeight;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    video.style.display  = 'none';
+    canvas.style.display = 'block';
+    if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream = null; }
+
+    // Marker-Punkt positionieren
+    dot.style.left    = (xRel * 100) + '%';
+    dot.style.top     = (yRel * 100) + '%';
+    dot.style.display = 'block';
+    document.getElementById('kameraHint').style.display = 'none';
+
+    // Pending-Marker merken
+    pendingMarker = { x: xRel, y: yRel, foto: canvas.toDataURL('image/jpeg', 0.7) };
+
+    // Benennungs-Modal öffnen
+    document.getElementById('benennInput').value = '';
+    document.getElementById('benennModal').classList.add('open');
+    setTimeout(function(){ document.getElementById('benennInput').focus(); }, 100);
+  });
+
+  // ── Modal: Speichern
+  document.getElementById('benennOk').addEventListener('click', function(){
+    var name = document.getElementById('benennInput').value.trim();
+    if(!name) return;
+    pendingMarker.name  = name;
+    pendingMarker.datum = new Date().toISOString().slice(0,10);
+    pendingMarker.preset = document.querySelector('.preset-name').textContent;
+    markerSpeicher.push(pendingMarker);
+    speichereInStorage();
+    pendingMarker = null;
+    document.getElementById('benennModal').classList.remove('open');
+    document.getElementById('kameraHint').textContent = '✓ ' + name + ' gespeichert';
+    document.getElementById('kameraHint').style.display = 'block';
+    setTimeout(function(){
+      // Zurück zum Homescreen
+      document.getElementById('s-kamera').classList.remove('active');
+      document.getElementById('s-home').classList.add('active');
+    }, 1200);
+  });
+
+  // ── Modal: Abbruch
+  document.getElementById('benennAbbruch').addEventListener('click', function(){
+    document.getElementById('benennModal').classList.remove('open');
+    dot.style.display = 'none';
+    canvas.style.display = 'none';
+    video.style.display  = 'block';
+    document.getElementById('kameraHint').textContent = 'Antippen zum Markieren';
+    document.getElementById('kameraHint').style.display = 'block';
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+      .then(function(s){ stream = s; video.srcObject = s; }).catch(function(){});
+  });
+
+  // ── Panel öffnen / schließen
+  document.getElementById('panelTab').addEventListener('click', function(){
+    document.getElementById('leftPanel').classList.toggle('open');
+  });
+  document.getElementById('panelClose').addEventListener('click', function(){
+    document.getElementById('leftPanel').classList.remove('open');
+  });
+
+  // ── Ghostbar: nach 10s ausblenden, bei Berührung wieder einblenden
+  var ghostbar = document.querySelector('.right-sidebar');
+  var ghostTimer = setTimeout(function(){ ghostbar.classList.add('hidden'); }, 10000);
+  document.querySelector('.phone').addEventListener('touchstart', revealGhost);
+  document.querySelector('.phone').addEventListener('mousedown', revealGhost);
+  function revealGhost(){
+    ghostbar.classList.remove('hidden');
+    clearTimeout(ghostTimer);
+    ghostTimer = setTimeout(function(){ ghostbar.classList.add('hidden'); }, 10000);
+  }
+
+  // ── Themen-Karte wählen
+  document.querySelectorAll('.themen-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      document.querySelectorAll('.themen-card').forEach(function(c){ c.classList.remove('active-preset'); });
+      card.classList.add('active-preset');
+      var name = card.querySelector('.tc-name').textContent;
+      document.querySelector('.preset-name').textContent = name;
+    });
+  });
+
+  // ── Liste rendern
+  function renderListe(){
+    var scroll = document.getElementById('listeScroll');
+    var leer   = document.getElementById('listeLeer');
+    var header = document.getElementById('listeHeader');
+    header.textContent = 'MARKER · ' + markerSpeicher.length + ' Eintrag' + (markerSpeicher.length !== 1 ? 'einträge' : '');
+    // Alte Einträge entfernen (nicht #listeLeer)
+    Array.from(scroll.children).forEach(function(el){
+      if(el.id !== 'listeLeer') el.parentNode.removeChild(el);
+    });
+    if(markerSpeicher.length === 0){ leer.style.display = 'flex'; return; }
+    leer.style.display = 'none';
+    markerSpeicher.forEach(function(m, idx){
+      var item = document.createElement('div');
+      item.className = 'liste-item';
+      var img = document.createElement('img');
+      img.className = 'liste-thumb';
+      img.src = m.foto;
+      var info = document.createElement('div');
+      info.className = 'liste-info';
+      var nm = document.createElement('div');
+      nm.className = 'liste-name';
+      nm.textContent = m.name;
+      var dt = document.createElement('div');
+      dt.className = 'liste-datum';
+      dt.textContent = m.datum + ' · ' + m.preset;
+      info.appendChild(nm);
+      info.appendChild(dt);
+      item.appendChild(img);
+      item.appendChild(info);
+      scroll.appendChild(item);
+
+      // Antippen → Detail
+      item.addEventListener('click', function(){
+        if(item.classList.contains('delete-mode')){ return; }
+        openDetail(m);
+      });
+
+      // Lang halten → Löschen-Button
+      var holdTimer = null;
+      function startHold(){ holdTimer = setTimeout(function(){ showDelete(item, idx); }, 600); }
+      function cancelHold(){ clearTimeout(holdTimer); }
+      item.addEventListener('touchstart', startHold, {passive:true});
+      item.addEventListener('touchend', cancelHold);
+      item.addEventListener('touchmove', cancelHold);
+      item.addEventListener('mousedown', startHold);
+      item.addEventListener('mouseup', cancelHold);
+      item.addEventListener('mouseleave', cancelHold);
+    });
+  }
+
+  function showDelete(item, idx){
+    // Alle anderen delete-modes zurücksetzen
+    document.querySelectorAll('.liste-item').forEach(function(el){ 
+      el.classList.remove('delete-mode');
+      var b = el.querySelector('.liste-del-btn');
+      if(b) b.parentNode.removeChild(b);
+    });
+    item.classList.add('delete-mode');
+    var btn = document.createElement('div');
+    btn.className = 'liste-del-btn';
+    btn.textContent = 'Löschen';
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      markerSpeicher.splice(idx, 1);
+      speichereInStorage();
+      renderListe();
+    });
+    item.appendChild(btn);
+  }
+
+  // ── Detail-Overlay öffnen
+  function openDetail(m){
+    document.getElementById('detailName').textContent = m.name;
+    document.getElementById('detailDatum').textContent = m.datum + ' · ' + m.preset;
+    var img = document.getElementById('detailImg');
+    img.src = m.foto;
+    var dot = document.getElementById('detailDot');
+    // Dot-Position nach Bild-Laden setzen
+    img.onload = function(){
+      dot.style.left = (m.x * 100) + '%';
+      dot.style.top  = (m.y * 100) + '%';
+    };
+    if(img.complete){ dot.style.left = (m.x*100)+'%'; dot.style.top = (m.y*100)+'%'; }
+    document.getElementById('detailOverlay').classList.add('open');
+  }
+
+  document.getElementById('detailClose').addEventListener('click', function(){
+    document.getElementById('detailOverlay').classList.remove('open');
+  });
+
+  // Liste neu rendern wenn Liste-Tab geöffnet wird
+  var origSwitch = window.switchTab;
+  window.switchTab = function(name){
+    origSwitch(name);
+    if(name === 'liste') renderListe();
+  };
+
+  // ── SCHEIBCHEN 4 — Suche ─────────────────────────────────────
+  var suchScope = 'preset'; // 'preset' oder 'global'
+
+  function oeffneSuche(){
+    document.getElementById('suchInput').value = '';
+    zeigeErgebnis([]);
+    document.getElementById('suchLeer').style.display = 'flex';
+    document.getElementById('suchOverlay').classList.add('open');
+    setTimeout(function(){ document.getElementById('suchInput').focus(); }, 120);
+  }
+  function schliesseSuche(){
+    document.getElementById('suchOverlay').classList.remove('open');
+    stopSprache();
+  }
+
+  document.getElementById('suchOeffnen').addEventListener('click', oeffneSuche);
+  document.getElementById('suchClose').addEventListener('click', schliesseSuche);
+
+  // Scope-Schalter
+  document.getElementById('scopePreset').addEventListener('click', function(){
+    suchScope = 'preset';
+    document.getElementById('scopePreset').classList.add('active');
+    document.getElementById('scopeGlobal').classList.remove('active');
+    fuehreSucheAus(document.getElementById('suchInput').value.trim());
+  });
+  document.getElementById('scopeGlobal').addEventListener('click', function(){
+    suchScope = 'global';
+    document.getElementById('scopeGlobal').classList.add('active');
+    document.getElementById('scopePreset').classList.remove('active');
+    fuehreSucheAus(document.getElementById('suchInput').value.trim());
+  });
+
+  // Texteingabe
+  document.getElementById('suchInput').addEventListener('input', function(){
+    fuehreSucheAus(this.value.trim());
+  });
+
+  function fuehreSucheAus(q){
+    if(!q){ zeigeErgebnis([]); document.getElementById('suchLeer').style.display='flex'; return; }
+    var pool = markerSpeicher;
+    if(suchScope === 'preset'){
+      var aktPreset = document.querySelector('.preset-name').textContent;
+      pool = pool.filter(function(m){ return m.preset === aktPreset; });
+    }
+    var ql = q.toLowerCase();
+    var treffer = pool.filter(function(m){ return m.name.toLowerCase().indexOf(ql) !== -1; });
+    // Nach Datum absteigend sortieren
+    treffer.sort(function(a,b){ return b.datum.localeCompare(a.datum); });
+    zeigeErgebnis(treffer);
+  }
+
+  function zeigeErgebnis(treffer){
+    var box = document.getElementById('suchErgebnis');
+    var leer = document.getElementById('suchLeer');
+    Array.from(box.children).forEach(function(el){ if(el.id !== 'suchLeer') el.parentNode.removeChild(el); });
+    if(treffer.length === 0){ leer.style.display='flex'; return; }
+    leer.style.display = 'none';
+    if(treffer.length === 1){
+      // Direkt Detail öffnen
+      schliesseSuche();
+      openDetail(treffer[0]);
+      return;
+    }
+    treffer.forEach(function(m){
+      var item = document.createElement('div');
+      item.className = 'such-item';
+      var img = document.createElement('img');
+      img.className = 'such-thumb';
+      img.src = m.foto;
+      var info = document.createElement('div');
+      info.className = 'such-info';
+      var nm = document.createElement('div');
+      nm.className = 'such-name';
+      nm.textContent = m.name;
+      var mt = document.createElement('div');
+      mt.className = 'such-meta';
+      mt.textContent = m.datum + ' · ' + m.preset;
+      info.appendChild(nm);
+      info.appendChild(mt);
+      item.appendChild(img);
+      item.appendChild(info);
+      item.addEventListener('click', function(){
+        schliesseSuche();
+        openDetail(m);
+      });
+      box.appendChild(item);
+    });
+  }
+
+  // ── Sprachsuche (Web Speech API — braucht HTTPS)
+  var recognition = null;
+  function stopSprache(){
+    if(recognition){ try{ recognition.stop(); }catch(e){} recognition = null; }
+    var mic = document.getElementById('suchMic');
+    mic.classList.remove('hoeren');
+    document.getElementById('suchMicLabel').textContent = 'Sprechen';
+  }
+
+  document.getElementById('suchMic').addEventListener('click', function(){
+    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRec){
+      document.getElementById('suchMicLabel').textContent = 'HTTPS nötig';
+      return;
+    }
+    if(recognition){ stopSprache(); return; }
+    recognition = new SpeechRec();
+    recognition.lang = 'de-DE';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    var mic = document.getElementById('suchMic');
+    mic.classList.add('hoeren');
+    document.getElementById('suchMicLabel').textContent = 'Höre …';
+    recognition.onresult = function(e){
+      var text = e.results[0][0].transcript;
+      document.getElementById('suchInput').value = text;
+      fuehreSucheAus(text);
+      stopSprache();
+    };
+    recognition.onerror = function(){
+      document.getElementById('suchMicLabel').textContent = 'Fehler';
+      stopSprache();
+    };
+    recognition.onend = function(){ stopSprache(); };
+    recognition.start();
+  });
+
+  // ── SCHEIBCHEN 5 — Einstellungen ────────────────────────────────
+  document.getElementById('zahnradBtn').addEventListener('click', function(){
+    document.getElementById('einstellOverlay').classList.add('open');
+  });
+  document.getElementById('einstellClose').addEventListener('click', function(){
+    document.getElementById('einstellOverlay').classList.remove('open');
+  });
+
+  // ── SCHEIBCHEN 6 — Archiv ────────────────────────────────────────
+  var archivSort = 'datum'; // 'datum' | 'ort' | 'art'
+
+  function renderArchiv(filter){
+    var scroll = document.getElementById('archivScroll');
+    var leer   = document.getElementById('archivLeer');
+    // Alte Einträge entfernen
+    Array.from(scroll.children).forEach(function(el){
+      if(el.id !== 'archivLeer') el.parentNode.removeChild(el);
+    });
+    var pool = markerSpeicher.slice();
+    // Filter anwenden
+    if(filter){
+      var fl = filter.toLowerCase();
+      pool = pool.filter(function(m){ return m.name.toLowerCase().indexOf(fl) !== -1; });
+    }
+    // Sortierung
+    if(archivSort === 'datum'){
+      pool.sort(function(a,b){ return b.datum.localeCompare(a.datum); });
+    } else if(archivSort === 'ort'){
+      pool.sort(function(a,b){ return (a.preset||'').localeCompare(b.preset||''); });
+    } else {
+      pool.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+    }
+    if(pool.length === 0){ leer.style.display = 'flex'; return; }
+    leer.style.display = 'none';
+    // Ein Treffer → direkt Detail
+    if(filter && pool.length === 1){ openDetail(pool[0]); return; }
+    pool.forEach(function(m){
+      var item = document.createElement('div');
+      item.className = 'archiv-item';
+      var img = document.createElement('img');
+      img.className = 'archiv-thumb';
+      img.src = m.foto;
+      var info = document.createElement('div');
+      info.className = 'archiv-info';
+      var nm = document.createElement('div');
+      nm.className = 'archiv-name';
+      nm.textContent = m.name;
+      var mt = document.createElement('div');
+      mt.className = 'archiv-meta';
+      mt.textContent = m.datum + ' · ' + (m.preset || '—');
+      info.appendChild(nm); info.appendChild(mt);
+      item.appendChild(img); item.appendChild(info);
+      item.addEventListener('click', function(){ openDetail(m); });
+      scroll.appendChild(item);
+    });
+  }
+
+  // Suche live
+  document.getElementById('archivInput').addEventListener('input', function(){
+    renderArchiv(this.value.trim());
+  });
+
+  // Sortier-Buttons
+  ['sortDatum','sortOrt','sortArt'].forEach(function(id){
+    document.getElementById(id).addEventListener('click', function(){
+      document.querySelectorAll('.sort-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      archivSort = id === 'sortDatum' ? 'datum' : id === 'sortOrt' ? 'ort' : 'art';
+      renderArchiv(document.getElementById('archivInput').value.trim());
+    });
+  });
+
+  // Archiv neu rendern beim Tab-Wechsel
+  var origSwitch2 = window.switchTab;
+  window.switchTab = function(name){
+    origSwitch2(name);
+    if(name === 'archiv'){
+      document.getElementById('archivInput').value = '';
+      renderArchiv('');
+    }
+  };
+</script>
+</body>
+</html>
