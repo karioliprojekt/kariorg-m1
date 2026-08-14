@@ -34,6 +34,35 @@
 
   body{background:#E8EEF4;display:flex;justify-content:center;padding:1.5rem 0 2rem;font-family:'DM Sans',sans-serif;}
 
+  /* ── MOBILE FULLBLEED — identisch kariPharm ── */
+  @media (max-width: 480px), (pointer: coarse) {
+    body { padding: 0; align-items: stretch; }
+    .phone {
+      width: 100% !important;
+      min-width: unset !important;
+      border-radius: 0 !important;
+      border-left: none !important;
+      border-right: none !important;
+      min-height: var(--app-height, 100vh) !important;
+      height: var(--app-height, 100vh) !important;
+      max-height: unset !important;
+    }
+  }
+  /* Force fullbleed für Touch-Geräte (deckt auch "Desktop-Seite" in Chrome ab) */
+  @media (max-width: 600px) {
+    html.is-touch-device body { padding: 0 !important; align-items: stretch !important; }
+    html.is-touch-device .phone {
+      width: 100% !important;
+      min-width: unset !important;
+      border-radius: 0 !important;
+      border-left: none !important;
+      border-right: none !important;
+      min-height: var(--app-height, 100vh) !important;
+      height: var(--app-height, 100vh) !important;
+      max-height: unset !important;
+    }
+  }
+
   /* ── PHONE SHELL ── */
   .phone{
     width:320px;
