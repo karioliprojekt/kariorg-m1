@@ -2,9 +2,18 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+(function(){
+  var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia('(pointer: coarse)').matches;
+  document.documentElement.classList.toggle('is-touch-device', isTouch);
+})();
+</script>
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1B3A57">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;kariOrg&quot;,&quot;short_name&quot;:&quot;kariOrg&quot;,&quot;display&quot;:&quot;fullscreen&quot;,&quot;background_color&quot;:&quot;%231B3A57&quot;,&quot;theme_color&quot;:&quot;%231B3A57&quot;,&quot;orientation&quot;:&quot;portrait&quot;}">
 <title>kariOrg · Karioli · S1</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
@@ -29,7 +38,7 @@
   .phone{
     width:320px;
     min-height:600px;
-    height:calc(100vh - 3rem);
+    height:calc(var(--app-height, 100vh) - 3rem);
     max-height:700px;
     background:linear-gradient(160deg,#1B3A57 0%,#2A5480 60%,#1B3A57 100%);
     border-radius:40px;
@@ -1234,6 +1243,14 @@
       renderArchiv('');
     }
   };
+
+  /* STABLE HEIGHT — eliminates address bar jumping */
+  function setAppHeight() {
+    document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight, 100); });
 </script>
 </body>
 </html>
