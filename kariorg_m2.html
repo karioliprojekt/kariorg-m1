@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1B3A57">
 <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;kariOrg&quot;,&quot;short_name&quot;:&quot;kariOrg&quot;,&quot;display&quot;:&quot;fullscreen&quot;,&quot;background_color&quot;:&quot;%231B3A57&quot;,&quot;theme_color&quot;:&quot;%231B3A57&quot;,&quot;orientation&quot;:&quot;portrait&quot;}">
-<title>kariOrg · Karioli · S1</title>
+<title>kariOrg · Karioli · M2 · Hobby</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -217,16 +217,20 @@
   .scanner-btn{
     width:100px;height:100px;border-radius:50%;
     background:linear-gradient(145deg,#FFFFFF 0%,#D8E8F4 100%);
-    border:3px solid rgba(255,255,255,0.4);
-    box-shadow:0 6px 24px rgba(0,0,0,0.35),inset 0 1px 2px rgba(255,255,255,0.6);
+    border:5px solid #4AE040;
+    box-shadow:0 6px 24px rgba(0,0,0,0.35),0 0 0 2px rgba(74,224,64,0.25),inset 0 1px 2px rgba(255,255,255,0.6);
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
-    font-size:38px;line-height:1;
+    font-size:13px;font-weight:800;letter-spacing:.06em;
+    color:#4AE040;
+    font-family:'DM Mono',monospace;
     user-select:none;
     -webkit-tap-highlight-color:transparent;
-    transition:transform .12s,box-shadow .12s;
+    transition:transform .12s,box-shadow .12s,border-color .2s,color .2s;
   }
   .scanner-btn:active{transform:scale(.95);box-shadow:0 3px 12px rgba(0,0,0,0.3),inset 0 1px 2px rgba(255,255,255,0.4);}
+  .scanner-btn.modus-lens{border-color:#F0C040;box-shadow:0 6px 24px rgba(0,0,0,0.35),0 0 0 2px rgba(240,192,64,0.25),inset 0 1px 2px rgba(255,255,255,0.6);color:#F0C040;}
+  .scanner-btn.modus-ai{border-color:#E04040;box-shadow:0 6px 24px rgba(0,0,0,0.35),0 0 0 2px rgba(224,64,64,0.25),inset 0 1px 2px rgba(255,255,255,0.6);color:#E04040;}
 
   /* ── MIC / TEXT BUTTON ── */
   .mic-btn{
@@ -595,8 +599,8 @@
 
   <!-- PRESET HEADER -->
   <div class="preset-header">
-    <div class="preset-name">Aquarium</div>
-    <div class="preset-sub">HAUSHALT · OBJEKT-PRESET</div>
+    <div class="preset-name">Mountainbike</div>
+    <div class="preset-sub">HOBBY · OBJEKT-PRESET</div>
   </div>
 
   <!-- LEFT SIDEBAR — Modul / Konfiguration / Forum -->
@@ -617,26 +621,42 @@
 
   <!-- OVERLAY: Modul -->
   <div id="modulOverlay" style="display:none;position:absolute;inset:0;z-index:50;background:rgba(10,26,42,0.97);border-radius:37px;flex-direction:column;padding:18px 16px 16px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:16px;">
-      <span style="font-family:'DM Mono',monospace;font-size:var(--fs-sm);color:rgba(255,255,255,0.85);letter-spacing:.12em;font-weight:600;">MODUL</span>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:18px;">
+      <span style="font-family:'DM Mono',monospace;font-size:var(--fs-sm);color:rgba(255,255,255,0.85);letter-spacing:.12em;font-weight:600;">◉ MODUL WÄHLEN</span>
       <span id="modulClose" style="color:rgba(255,255,255,0.45);font-size:var(--fs-md);cursor:pointer;padding:4px 6px;">✕</span>
     </div>
-    <div style="flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">
-      <div style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.11);border-radius:12px;padding:12px 14px;">
-        <div style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);letter-spacing:.14em;margin-bottom:10px;">AKTIVES MODUL</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;">
-          <span style="font-size:var(--fs-sm);color:rgba(255,255,255,0.75);">Haushalt</span>
-          <span style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.35);">aktiv ✓</span>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <!-- Haushalt — verfügbar -->
+      <div style="border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);">
+        <span style="font-size:26px;flex-shrink:0;">🏠</span>
+        <div style="flex:1;">
+          <div style="font-size:var(--fs-md);font-weight:700;color:rgba(255,255,255,0.90);letter-spacing:.03em;">Haushalt</div>
+          <div style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);letter-spacing:.08em;margin-top:3px;">Kamera · Du benennst · Du findest</div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-top:1px solid rgba(255,255,255,0.07);">
-          <span style="font-size:var(--fs-sm);color:rgba(255,255,255,0.35);">Hobby</span>
-          <span style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.22);">bald</span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-top:1px solid rgba(255,255,255,0.07);">
-          <span style="font-size:var(--fs-sm);color:rgba(255,255,255,0.35);">Expedition</span>
-          <span style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.22);">bald</span>
-        </div>
+        <span style="font-size:14px;opacity:0.35;color:#fff;">›</span>
       </div>
+
+      <!-- Hobby — aktiv -->
+      <div style="border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;background:rgba(74,224,64,0.12);border:1px solid rgba(74,224,64,0.35);">
+        <span style="font-size:26px;flex-shrink:0;">🔧</span>
+        <div style="flex:1;">
+          <div style="font-size:var(--fs-md);font-weight:700;color:#7EE87A;letter-spacing:.03em;">Hobby</div>
+          <div style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);letter-spacing:.08em;margin-top:3px;">Kamera & Lens · Bestätigen · Forschen</div>
+        </div>
+        <span style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:#7EE87A;letter-spacing:.1em;">AKTIV</span>
+      </div>
+
+      <!-- Expedition — gesperrt -->
+      <div style="border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);opacity:0.6;">
+        <span style="font-size:26px;flex-shrink:0;">🧭</span>
+        <div style="flex:1;">
+          <div style="font-size:var(--fs-md);font-weight:700;color:rgba(255,255,255,0.90);letter-spacing:.03em;">Expedition</div>
+          <div style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);letter-spacing:.08em;margin-top:3px;">KI-Scanner · Erkennt selbst · Liefert alles</div>
+        </div>
+        <span style="font-size:18px;opacity:0.55;">🔒</span>
+      </div>
+
     </div>
   </div>
 
@@ -654,13 +674,29 @@
 
   <!-- RIGHT SIDEBAR — Ghostbar -->
   <div class="right-sidebar" id="ghostbar">
-    <div class="ghost-btn">
-      <span class="ghost-icon">🔍</span>
-      <span class="ghost-label">lens</span>
+    <div class="ghost-btn" onclick="window.open('https://www.rockshox.com','_blank')">
+      <span class="ghost-icon">🔩</span>
+      <span class="ghost-label">RockShox</span>
+    </div>
+    <div class="ghost-btn" onclick="window.open('https://www.sram.com/en/sram/mountain/series/sram-axs','_blank')">
+      <span class="ghost-icon">⚡</span>
+      <span class="ghost-label">AXS</span>
+    </div>
+    <div class="ghost-btn" onclick="window.open('https://www.sram.com/en/rockshox/series/shockwiz','_blank')">
+      <span class="ghost-icon">📊</span>
+      <span class="ghost-label">ShockWiz</span>
+    </div>
+    <div class="ghost-btn" onclick="window.open('https://www.sram.com/en/sram/cross-brand/series/trailhead','_blank')">
+      <span class="ghost-icon">🗺</span>
+      <span class="ghost-label">Trail</span>
     </div>
     <div class="ghost-btn">
       <span class="ghost-icon">📎</span>
       <span class="ghost-label">doc</span>
+    </div>
+    <div class="ghost-btn" style="opacity:0.35;">
+      <span class="ghost-icon">＋</span>
+      <span class="ghost-label">mehr</span>
     </div>
     <div class="ghost-btn ghost-fix" id="zahnradBtn">
       <span class="ghost-icon">⚙</span>
@@ -733,7 +769,11 @@
     <!-- HOME-Ansicht: Scanner + Mic -->
     <div class="screen active" id="s-home">
       <div class="scanner-wrap">
-        <div class="scanner-btn">📸</div>
+        <div class="scanner-btn" id="scannerBtn">FOTO</div>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <div id="modeKamera" onclick="setMode('kamera')" style="display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:14px;font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.08em;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;border:1px solid rgba(255,255,255,0.6);color:var(--blue);background:rgba(255,255,255,0.88);font-weight:700;">📸 Kamera</div>
+          <div id="modeLens" onclick="setMode('lens')" style="display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:14px;font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.08em;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.07);">🔍 Lens</div>
+        </div>
         <div class="mic-btn" id="suchOeffnen">
           <span class="mic-icon">🎙️</span>
           <span class="mic-label">Suche</span>
@@ -902,6 +942,10 @@
   var wrap   = document.getElementById('kameraWrap');
 
   document.querySelector('.scanner-btn').addEventListener('click', function(){
+    if(aktModus === 'lens'){
+      window.open('https://lens.google.com', '_blank');
+      return;
+    }
     document.getElementById('s-home').classList.remove('active');
     document.getElementById('s-kamera').classList.add('active');
     canvas.style.display = 'none';
@@ -994,6 +1038,29 @@
   document.getElementById('leftKonfig').addEventListener('click', function(){ openOverlay('einstellOverlay'); });
 
   document.getElementById('leftForum').addEventListener('click', function(){ openOverlay('forumOverlay'); });
+
+  // ── SCANNER-MODUS (M2) ──────────────────────────────────────────
+  var aktModus = 'kamera';
+  function setMode(modus){
+    aktModus = modus;
+    var btn = document.getElementById('scannerBtn');
+    btn.classList.remove('modus-lens','modus-ai');
+    if(modus === 'lens'){
+      btn.textContent = 'LENS';
+      btn.classList.add('modus-lens');
+    } else {
+      btn.textContent = 'FOTO';
+    }
+    var kBtn = document.getElementById('modeKamera');
+    var lBtn = document.getElementById('modeLens');
+    if(modus === 'kamera'){
+      kBtn.style.background='rgba(255,255,255,0.88)'; kBtn.style.color='var(--blue)'; kBtn.style.borderColor='rgba(255,255,255,0.6)'; kBtn.style.fontWeight='700';
+      lBtn.style.background='rgba(255,255,255,0.07)'; lBtn.style.color='rgba(255,255,255,0.45)'; lBtn.style.borderColor='rgba(255,255,255,0.18)'; lBtn.style.fontWeight='400';
+    } else {
+      lBtn.style.background='rgba(255,255,255,0.88)'; lBtn.style.color='var(--blue)'; lBtn.style.borderColor='rgba(255,255,255,0.6)'; lBtn.style.fontWeight='700';
+      kBtn.style.background='rgba(255,255,255,0.07)'; kBtn.style.color='rgba(255,255,255,0.45)'; kBtn.style.borderColor='rgba(255,255,255,0.18)'; kBtn.style.fontWeight='400';
+    }
+  }
   document.getElementById('forumClose').addEventListener('click', function(){ closeOverlay('forumOverlay'); });
 
   // ── Ghostbar: nach 10s ausblenden, bei Berührung wieder einblenden
