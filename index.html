@@ -1,8 +1,168 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=kariorg_m1.html">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>kariOrg · Karioli · Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --blue:#1B3A57;
+    --green:#4AE040;
+    --yellow:#F0C040;
+    --red:#E04040;
+    --fs-xs:10px;
+    --fs-sm:12px;
+    --fs-md:15px;
+    --fs-lg:20px;
+    --fs-xl:28px;
+  }
+  html,body{
+    width:100%;height:100%;
+    background:var(--blue);
+    font-family:'Inter',sans-serif;
+    color:#fff;
+    overflow-x:hidden;
+  }
+  .wrap{
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    padding:32px 20px 40px;
+    gap:0;
+  }
+
+  /* ── HEADER ── */
+  .header{
+    display:flex;flex-direction:column;align-items:center;
+    margin-bottom:36px;
+  }
+  .brand{
+    font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);letter-spacing:.22em;
+    color:rgba(255,255,255,0.35);
+    margin-bottom:10px;
+    text-transform:uppercase;
+  }
+  .logo{
+    font-size:var(--fs-xl);font-weight:900;
+    letter-spacing:-.01em;color:#fff;
+  }
+  .logo span{color:rgba(255,255,255,0.35);}
+  .tagline{
+    font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);letter-spacing:.14em;
+    color:rgba(255,255,255,0.28);
+    margin-top:8px;text-align:center;
+  }
+
+  /* ── MODUL-KACHELN ── */
+  .module-list{
+    display:flex;flex-direction:column;gap:14px;
+    width:100%;max-width:340px;
+  }
+  .module-card{
+    border-radius:20px;padding:20px 20px 20px 16px;
+    display:flex;align-items:center;gap:16px;
+    border:1px solid rgba(255,255,255,0.10);
+    background:rgba(255,255,255,0.06);
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .12s,background .15s;
+    text-decoration:none;color:inherit;
+  }
+  .module-card:active{transform:scale(.97);background:rgba(255,255,255,0.10);}
+  .module-card.locked{opacity:0.45;cursor:default;pointer-events:none;}
+
+  .ring{
+    width:56px;height:56px;border-radius:50%;
+    background:linear-gradient(145deg,#FFFFFF 0%,#D8E8F4 100%);
+    border:4px solid var(--green);
+    box-shadow:0 0 0 2px rgba(74,224,64,0.2);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    font-family:'DM Mono',monospace;
+    font-size:9px;font-weight:700;letter-spacing:.06em;
+    color:var(--green);
+    transition:border-color .2s,color .2s;
+  }
+  .ring.yellow{border-color:var(--yellow);box-shadow:0 0 0 2px rgba(240,192,64,0.2);color:var(--yellow);}
+  .ring.red{border-color:var(--red);box-shadow:0 0 0 2px rgba(224,64,64,0.2);color:var(--red);}
+
+  .module-info{flex:1;}
+  .module-name{
+    font-size:var(--fs-lg);font-weight:800;
+    color:#fff;letter-spacing:.01em;
+    margin-bottom:4px;
+  }
+  .module-sub{
+    font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);letter-spacing:.09em;
+    color:rgba(255,255,255,0.35);
+    line-height:1.5;
+  }
+  .module-arrow{
+    font-size:20px;color:rgba(255,255,255,0.25);
+    flex-shrink:0;
+  }
+  .module-lock{
+    font-size:18px;flex-shrink:0;opacity:0.5;
+  }
+
+  /* ── FOOTER ── */
+  .footer{
+    margin-top:40px;
+    font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);letter-spacing:.14em;
+    color:rgba(255,255,255,0.18);
+    text-align:center;
+  }
+</style>
 </head>
-<body></body>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="brand">Karioli · Projekt Blau</div>
+    <div class="logo">kari<span>Org</span></div>
+    <div class="tagline">Ein Gedächtnis für Dinge</div>
+  </div>
+
+  <div class="module-list">
+
+    <a class="module-card" href="kariorg_m1.html">
+      <div class="ring">FOTO</div>
+      <div class="module-info">
+        <div class="module-name">Haushalt</div>
+        <div class="module-sub">Kamera · Du benennst · Du findest</div>
+      </div>
+      <div class="module-arrow">›</div>
+    </a>
+
+    <a class="module-card" href="kariorg_m2.html">
+      <div class="ring yellow">LENS</div>
+      <div class="module-info">
+        <div class="module-name">Hobby</div>
+        <div class="module-sub">Kamera & Lens · Bestätigen · Forschen</div>
+      </div>
+      <div class="module-arrow">›</div>
+    </a>
+
+    <div class="module-card locked">
+      <div class="ring red">KI</div>
+      <div class="module-info">
+        <div class="module-name">Experte</div>
+        <div class="module-sub">KI-Scanner · Erkennt selbst · Liefert alles</div>
+      </div>
+      <div class="module-lock">🔒</div>
+    </div>
+
+  </div>
+
+  <div class="footer">kariOrg · Demo · August 2026</div>
+
+</div>
+</body>
 </html>
