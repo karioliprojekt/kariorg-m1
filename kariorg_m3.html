@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+(function(){
+  var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia('(pointer: coarse)').matches;
+  document.documentElement.classList.toggle('is-touch-device', isTouch);
+})();
+</script>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1B3A57">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;kariOrg&quot;,&quot;short_name&quot;:&quot;kariOrg&quot;,&quot;display&quot;:&quot;fullscreen&quot;,&quot;background_color&quot;:&quot;%231B3A57&quot;,&quot;theme_color&quot;:&quot;%231B3A57&quot;,&quot;orientation&quot;:&quot;portrait&quot;}">
+<title>kariOrg · Karioli · M3 · Experte</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  :root{
+    --blue:       #1B3A57;
+    --blue-mid:   #2A5480;
+    --blue-light: #3A74A8;
+    --blue-pale:  rgba(27,58,87,0.08);
+    --white:      #FFFFFF;
+    --ghost:      rgba(255,255,255,0.85);
+    --fs-xl: 18px;
+    --fs-md: 15px;
+    --fs-sm: 12px;
+    --fs-xs: 10px;
+  }
+
+  body{background:#E8EEF4;display:flex;justify-content:center;padding:1.5rem 0 2rem;font-family:'DM Sans',sans-serif;}
+
+  /* ── MOBILE FULLBLEED — identisch kariPharm ── */
+  @media (max-width: 480px), (pointer: coarse) {
+    body { padding: 0; align-items: stretch; }
+    .phone {
+      width: 100% !important;
+      min-width: unset !important;
+      border-radius: 0 !important;
+      border-left: none !important;
+      border-right: none !important;
+      min-height: var(--app-height, 100vh) !important;
+      height: var(--app-height, 100vh) !important;
+      max-height: unset !important;
+    }
+  }
+  /* Force fullbleed für Touch-Geräte (deckt auch "Desktop-Seite" in Chrome ab) */
+  @media (max-width: 600px) {
+    html.is-touch-device body { padding: 0 !important; align-items: stretch !important; }
+    html.is-touch-device .phone {
+      width: 100% !important;
+      min-width: unset !important;
+      border-radius: 0 !important;
+      border-left: none !important;
+      border-right: none !important;
+      min-height: var(--app-height, 100vh) !important;
+      height: var(--app-height, 100vh) !important;
+      max-height: unset !important;
+    }
+  }
+
+  /* ── PHONE SHELL ── */
+  .phone{
+    width:320px;
+    min-height:600px;
+    height:calc(var(--app-height, 100vh) - 3rem);
+    max-height:700px;
+    background:linear-gradient(160deg,#1B3A57 0%,#2A5480 60%,#1B3A57 100%);
+    border-radius:40px;
+    padding:14px 14px 14px 14px;
+    border:3px solid #0E2236;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 16px 48px rgba(0,0,0,0.35);
+  }
+  .phone-notch{width:80px;height:10px;background:#0E2236;border-radius:8px;margin:0 auto 8px;}
+
+  /* ── STATUS BAR ── */
+  .status-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 2px;}
+  .status-left{display:flex;align-items:center;gap:6px;}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#4AE040;box-shadow:0 0 5px #4AE040;}
+  .status-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.85);letter-spacing:.1em;}
+  .status-right{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .gps-indicator{width:8px;height:8px;border-radius:50%;background:#888;box-shadow:0 0 4px rgba(0,0,0,0.4);transition:background .4s,box-shadow .4s;}
+  .gps-indicator.on{background:#4AE040;box-shadow:0 0 5px #4AE040;}
+  .gps-indicator.off{background:#E04040;box-shadow:0 0 5px #E04040;}
+  .status-time{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.78);letter-spacing:.06em;}
+  /* ── BOTTOM BRAND ── */
+  .bottom-brand{
+    text-align:center;padding:4px 0 4px;flex-shrink:0;
+    font-family:'DM Mono',monospace;font-size:8px;
+    color:rgba(255,255,255,0.55);letter-spacing:.12em;
+  }
+
+  /* ── PRESET HEADER ── */
+  .preset-header{
+    text-align:center;
+    padding:4px 40px 8px;
+    flex-shrink:0;
+  }
+  .preset-name{
+    font-size:var(--fs-xl);font-weight:700;
+    color:#FFFFFF;letter-spacing:.04em;
+    line-height:1.2;
+  }
+  .preset-sub{
+    font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);color:rgba(255,255,255,0.75);
+    letter-spacing:.1em;margin-top:2px;
+  }
+
+  /* ── LEFT SIDEBAR — 3 Konfig-Buttons ── */
+  .left-sidebar{
+    position:absolute;left:0;top:116px;
+    display:flex;flex-direction:column;gap:4px;
+    z-index:10;
+  }
+  .left-btn{
+    width:36px;height:46px;
+    background:rgba(255,255,255,0.13);
+    border-radius:0 8px 8px 0;
+    border:1px solid rgba(255,255,255,0.15);
+    border-left:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    cursor:pointer;
+    backdrop-filter:blur(6px);
+    transition:background .15s,border-color .15s;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .left-btn:active{background:rgba(255,255,255,0.26);}
+  .left-btn-icon{font-size:15px;line-height:1;}
+  .left-btn-label{
+    font-size:8px;color:rgba(255,255,255,0.7);
+    font-family:'DM Mono',monospace;letter-spacing:.04em;
+  }
+
+  /* ── LEFT PANEL (Slide-in) ── */
+  .left-panel{
+    position:absolute;left:0;top:76px;
+    width:170px;
+    background:rgba(255,255,255,0.97);
+    border-radius:0 14px 14px 0;
+    border:1px solid rgba(27,58,87,0.2);
+    border-left:none;
+    padding:12px 10px 12px 8px;
+    z-index:15;
+    display:none;
+    box-shadow:5px 4px 18px rgba(0,0,0,0.2);
+  }
+  .left-panel.open{display:block;}
+  .lp-title{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    letter-spacing:.12em;color:var(--blue);
+    margin-bottom:10px;text-transform:uppercase;
+  }
+  .lp-item{
+    background:#F0F4F8;border-radius:10px;
+    padding:10px 12px;margin-bottom:7px;
+    cursor:pointer;border:1px solid rgba(27,58,87,0.12);
+    transition:background .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .lp-item:active{background:#DDE6EF;}
+  .lp-item-name{font-size:var(--fs-sm);font-weight:600;color:var(--blue);}
+  .lp-item-sub{font-size:var(--fs-xs);color:rgba(27,58,87,0.55);margin-top:2px;font-family:'DM Mono',monospace;}
+  .lp-close{font-size:var(--fs-xs);color:rgba(27,58,87,0.45);cursor:pointer;text-align:right;margin-top:6px;font-family:'DM Mono',monospace;letter-spacing:.08em;}
+
+  /* ── RIGHT SIDEBAR — Ghostbar ── */
+  .right-sidebar{
+    position:absolute;right:0;top:116px;
+    display:flex;flex-direction:column;gap:4px;
+    z-index:10;
+    opacity:1;
+    transition:opacity 0.6s ease;
+    max-height:calc(var(--app-height,100vh) - 200px);
+    overflow-y:auto;
+    scrollbar-width:none;
+  }
+  .right-sidebar::-webkit-scrollbar{display:none;}
+  .right-sidebar.hidden{opacity:0;pointer-events:none;}
+  .ghost-btn{
+    width:36px;height:46px;
+    background:rgba(255,255,255,0.13);
+    border-radius:8px 0 0 8px;
+    border:1px solid rgba(255,255,255,0.15);
+    border-right:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    cursor:pointer;
+    backdrop-filter:blur(6px);
+    transition:background .15s;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    flex-shrink:0;
+  }
+  .ghost-btn:active{background:rgba(255,255,255,0.26);}
+  .ghost-btn.ghost-fix{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(255,255,255,0.1);
+    margin-top:8px;
+  }
+  .ghost-btn.ghost-fix:active{background:rgba(255,255,255,0.18);}
+  .ghost-icon{font-size:15px;line-height:1;}
+  .ghost-label{font-size:8px;color:rgba(255,255,255,0.7);font-family:'DM Mono',monospace;letter-spacing:.04em;}
+
+  /* ── CONTENT AREA ── */
+  .content{margin:0 38px 0 36px;flex:1 1 0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+
+  /* ── MAIN SCANNER BUTTON ── */
+  .scanner-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .scanner-btn{
+    width:100px;height:100px;border-radius:50%;
+    background:linear-gradient(145deg,#FFFFFF 0%,#D8E8F4 100%);
+    border:5px solid #4AE040;
+    box-shadow:0 6px 24px rgba(0,0,0,0.35),0 0 0 2px rgba(74,224,64,0.25),inset 0 1px 2px rgba(255,255,255,0.6);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    font-size:13px;font-weight:800;letter-spacing:.06em;
+    color:#4AE040;
+    font-family:'DM Mono',monospace;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .12s,box-shadow .12s,border-color .2s,color .2s;
+  }
+  .scanner-btn:active{transform:scale(.95);box-shadow:0 3px 12px rgba(0,0,0,0.3),inset 0 1px 2px rgba(255,255,255,0.4);}
+  .scanner-btn.modus-lens{border-color:#F0C040;box-shadow:0 6px 24px rgba(0,0,0,0.35),0 0 0 2px rgba(240,192,64,0.25),inset 0 1px 2px rgba(255,255,255,0.6);color:#F0C040;}
+  .scanner-btn.modus-ai{border-color:#E04040;box-shadow:0 6px 24px rgba(0,0,0,0.35),0 0 0 2px rgba(224,64,64,0.25),inset 0 1px 2px rgba(255,255,255,0.6);color:#E04040;}
+
+  /* ── MIC / TEXT BUTTON ── */
+  .mic-btn{
+    display:flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.22);
+    border-radius:20px;
+    padding:7px 16px;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s;
+  }
+  .mic-btn:active{background:rgba(255,255,255,0.22);}
+  .mic-icon{font-size:var(--fs-md);}
+  .mic-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.65);letter-spacing:.1em;}
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar{display:flex;gap:4px;padding-top:10px;flex-shrink:0;}
+  .tab-btn{
+    flex:1;padding:10px 2px 9px;border-radius:14px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);font-weight:700;
+    cursor:pointer;text-align:center;line-height:1.2;
+    color:rgba(255,255,255,0.55);
+    background:rgba(255,255,255,0.07);
+    border-top:1px solid rgba(255,255,255,0.12);
+    border-left:1px solid rgba(255,255,255,0.08);
+    border-right:1px solid rgba(0,0,0,0.2);
+    border-bottom:4px solid rgba(0,0,0,0.3);
+    box-shadow:1px 4px 8px rgba(0,0,0,0.25);
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s,color .15s;
+  }
+  .tab-btn.active{
+    background:rgba(255,255,255,0.92);
+    color:var(--blue);
+  }
+  .tab-btn:active{opacity:.8;}
+  .tab-icon{font-size:var(--fs-md);display:block;margin-bottom:2px;}
+
+  /* ── THEMEN PANEL (Bottom-Tab-Inhalt) ── */
+  .screen{display:none;flex:1 1 0;min-height:0;width:100%;}
+  .screen.active{display:flex;flex-direction:column;}
+
+  .themen-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:8px;padding:4px 0;
+    overflow-y:auto;
+  }
+  .themen-card{
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:12px;
+    padding:12px 10px;
+    cursor:pointer;text-align:center;
+    transition:background .15s;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .themen-card.active-preset{
+    background:rgba(255,255,255,0.88);
+    border-color:rgba(255,255,255,0.6);
+  }
+  .themen-card.active-preset .tc-name{color:var(--blue);}
+  .themen-card.active-preset .tc-icon{filter:none;}
+  .themen-card:active{background:rgba(255,255,255,0.22);}
+  .tc-icon{font-size:24px;display:block;margin-bottom:4px;}
+  .tc-name{font-size:var(--fs-sm);font-weight:600;color:rgba(255,255,255,0.85);}
+  .tc-count{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.4);margin-top:2px;}
+  .themen-card.active-preset .tc-count{color:rgba(27,58,87,0.45);}
+
+  /* ── KAMERA-SCREEN ── */
+  #kameraWrap{
+    position:relative;width:100%;flex:1 1 0;min-height:0;
+    overflow:hidden;border-radius:10px;background:#000;
+  }
+  #kameraVideo{
+    width:100%;height:100%;object-fit:cover;display:block;border-radius:10px;
+  }
+  #kameraCanvas{
+    position:absolute;inset:0;width:100%;height:100%;
+    border-radius:10px;display:none;
+  }
+  #kameraHint{
+    position:absolute;bottom:10px;left:0;right:0;
+    text-align:center;font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);color:rgba(255,255,255,0.6);
+    letter-spacing:.08em;pointer-events:none;
+  }
+  .marker-dot{
+    position:absolute;width:22px;height:22px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.9);
+    border:2px solid var(--blue);
+    box-shadow:0 0 0 3px rgba(27,58,87,0.35);
+    transform:translate(-50%,-50%);
+    display:none;pointer-events:none;
+    transition:transform .1s;
+  }
+
+  /* ── BENENNUNGS-MODAL ── */
+  .modal-overlay{
+    position:absolute;inset:0;z-index:50;
+    background:rgba(14,34,54,0.7);
+    display:none;align-items:center;justify-content:center;
+    border-radius:37px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:#FFFFFF;border-radius:16px;
+    padding:20px 18px 16px;width:220px;
+    box-shadow:0 8px 28px rgba(0,0,0,0.3);
+  }
+  .modal-title{
+    font-size:var(--fs-sm);font-weight:700;color:var(--blue);
+    margin-bottom:12px;letter-spacing:.04em;
+  }
+  .modal-input{
+    width:100%;border:1.5px solid rgba(27,58,87,0.25);
+    border-radius:8px;padding:9px 10px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);
+    color:var(--blue);outline:none;
+    transition:border-color .15s;
+  }
+  .modal-input:focus{border-color:var(--blue);}
+  .modal-buttons{display:flex;gap:8px;margin-top:12px;}
+  .modal-btn{
+    flex:1;padding:9px 0;border-radius:8px;
+    text-align:center;font-size:var(--fs-sm);font-weight:600;
+    cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:opacity .15s;
+  }
+  .modal-btn:active{opacity:.7;}
+  .modal-btn.secondary{background:#F0F4F8;color:var(--blue);}
+  .modal-btn.primary{background:var(--blue);color:#FFFFFF;}
+
+  /* Archiv Platzhalter */
+  .placeholder{
+    flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;
+    opacity:.35;
+  }
+  .ph-icon{font-size:36px;}
+  .ph-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:#FFFFFF;letter-spacing:.1em;}
+
+  /* ── LISTE-TAB ── */
+  .liste-header{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.4);letter-spacing:.12em;
+    padding:4px 2px 6px;flex-shrink:0;
+  }
+  .liste-scroll{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
+  .liste-leer{
+    flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;opacity:.35;
+  }
+  .liste-item{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:10px;padding:7px 10px;
+    cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s;
+    flex-shrink:0;
+  }
+  .liste-item:active{background:rgba(255,255,255,0.20);}
+  .liste-item.delete-mode{
+    background:rgba(200,40,40,0.25);
+    border-color:rgba(255,100,100,0.4);
+  }
+  .liste-thumb{
+    width:40px;height:40px;border-radius:7px;
+    object-fit:cover;flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.2);
+  }
+  .liste-info{flex:1;min-width:0;}
+  .liste-name{
+    font-size:var(--fs-sm);font-weight:600;
+    color:rgba(255,255,255,0.9);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .liste-datum{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.38);margin-top:2px;
+  }
+  .liste-del-btn{
+    background:rgba(220,50,50,0.85);color:#fff;
+    font-size:var(--fs-xs);font-weight:700;
+    border-radius:6px;padding:5px 8px;
+    cursor:pointer;flex-shrink:0;white-space:nowrap;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ── DETAIL-OVERLAY ── */
+  #detailOverlay{
+    position:absolute;inset:0;z-index:40;
+    background:#0E2236;border-radius:37px;
+    display:none;flex-direction:column;
+  }
+  #detailOverlay.open{display:flex;}
+  .detail-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px 14px 6px;flex-shrink:0;
+  }
+  .detail-name{font-size:var(--fs-md);font-weight:700;color:#FFF;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .detail-close{font-size:var(--fs-md);color:rgba(255,255,255,0.5);cursor:pointer;padding:4px 6px;-webkit-tap-highlight-color:transparent;}
+  .detail-wrap{position:relative;flex:1 1 0;min-height:0;overflow:hidden;}
+  #detailImg{width:100%;height:100%;object-fit:contain;display:block;}
+  .detail-dot{
+    position:absolute;width:22px;height:22px;border-radius:50%;
+    background:rgba(255,255,255,0.9);border:2px solid var(--blue);
+    box-shadow:0 0 0 3px rgba(27,58,87,0.35);
+    transform:translate(-50%,-50%);pointer-events:none;
+  }
+  .detail-datum{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.35);text-align:center;padding:6px 0 10px;
+    flex-shrink:0;
+  }
+
+  /* ── SUCH-OVERLAY ── */
+  #suchOverlay{
+    position:absolute;inset:0;z-index:45;
+    background:rgba(14,34,54,0.97);border-radius:37px;
+    display:none;flex-direction:column;padding:14px;
+  }
+  #suchOverlay.open{display:flex;}
+  .such-bar{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-bottom:10px;}
+  .such-input{
+    flex:1;background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.22);border-radius:20px;
+    padding:9px 14px;font-family:'DM Sans',sans-serif;
+    font-size:var(--fs-sm);color:#FFF;outline:none;
+  }
+  .such-input::placeholder{color:rgba(255,255,255,0.35);}
+  .such-close{color:rgba(255,255,255,0.5);font-size:var(--fs-md);cursor:pointer;padding:4px 6px;-webkit-tap-highlight-color:transparent;}
+    .such-mic{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);
+    border-radius:20px;padding:8px 14px;cursor:pointer;flex-shrink:0;margin-bottom:14px;
+    -webkit-tap-highlight-color:transparent;transition:background .15s;
+  }
+  .such-mic:active,.such-mic.hoeren{background:rgba(255,80,80,0.25);border-color:rgba(255,100,100,0.5);}
+  .such-mic-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.6);letter-spacing:.1em;}
+  .such-ergebnis{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
+  .such-leer{flex:1;display:flex;align-items:center;justify-content:center;opacity:.35;}
+  .such-leer-label{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:#FFF;letter-spacing:.1em;}
+  .such-item{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.14);
+    border-radius:10px;padding:7px 10px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s;flex-shrink:0;
+  }
+  .such-item:active{background:rgba(255,255,255,0.20);}
+  .such-thumb{width:40px;height:40px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,0.2);}
+  .such-info{flex:1;min-width:0;}
+  .such-name{font-size:var(--fs-sm);font-weight:600;color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .such-meta{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);margin-top:2px;}
+
+  /* ── ZAHNRAD-BUTTON (fest, oberhalb Ghostbar) ── */
+
+
+  /* ── EINSTELLUNGS-OVERLAY ── */
+  #einstellOverlay{
+    position:absolute;inset:0;z-index:55;
+    background:rgba(10,26,42,0.97);border-radius:37px;
+    display:none;flex-direction:column;padding:18px 16px 16px;
+  }
+  #einstellOverlay.open{display:flex;}
+  .einstell-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    flex-shrink:0;margin-bottom:16px;
+  }
+  .einstell-title{
+    font-family:'DM Mono',monospace;font-size:var(--fs-sm);
+    color:rgba(255,255,255,0.85);letter-spacing:.12em;font-weight:600;
+  }
+  .einstell-close{
+    color:rgba(255,255,255,0.45);font-size:var(--fs-md);
+    cursor:pointer;padding:4px 6px;-webkit-tap-highlight-color:transparent;
+  }
+  .einstell-scroll{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
+  .einstell-section{
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.11);
+    border-radius:12px;padding:12px 14px;
+  }
+  .einstell-section-title{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.38);letter-spacing:.14em;
+    margin-bottom:10px;text-transform:uppercase;
+  }
+  .einstell-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.07);
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  .einstell-row:last-child{border-bottom:none;}
+  .einstell-row-label{font-size:var(--fs-sm);color:rgba(255,255,255,0.75);}
+  .einstell-row-arrow{font-size:var(--fs-xs);color:rgba(255,255,255,0.28);}
+  .einstell-badge{
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);
+    color:rgba(255,255,255,0.35);margin-right:6px;
+  }
+
+  /* ── ARCHIV-TAB ── */
+  .archiv-bar{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-bottom:8px;}
+  .archiv-input{
+    flex:1;background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.22);border-radius:20px;
+    padding:8px 13px;font-family:'DM Sans',sans-serif;
+    font-size:var(--fs-sm);color:#FFF;outline:none;
+  }
+  .archiv-input::placeholder{color:rgba(255,255,255,0.32);}
+  .archiv-sort{display:flex;gap:4px;flex-shrink:0;margin-bottom:8px;}
+  .sort-btn{
+    flex:1;padding:5px 0;border-radius:10px;text-align:center;
+    font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.06em;
+    color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.1);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;
+  }
+  .sort-btn.active{background:rgba(255,255,255,0.88);color:var(--blue);font-weight:700;}
+  .archiv-scroll{flex:1 1 0;overflow-y:auto;display:flex;flex-direction:column;gap:5px;}
+  .archiv-leer{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:.35;}
+  .archiv-item{
+    display:flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.13);
+    border-radius:10px;padding:7px 10px;cursor:pointer;user-select:none;
+    -webkit-tap-highlight-color:transparent;transition:background .15s;flex-shrink:0;
+  }
+  .archiv-item:active{background:rgba(255,255,255,0.18);}
+  .archiv-thumb{width:40px;height:40px;border-radius:7px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,0.18);}
+  .archiv-info{flex:1;min-width:0;}
+  .archiv-name{font-size:var(--fs-sm);font-weight:600;color:rgba(255,255,255,0.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .archiv-meta{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.36);margin-top:2px;}
+
+  /* ── LAGER-OVERLAY ─────────────────────────────────────── */
+  #lagerOverlay{
+    position:absolute;inset:0;z-index:42;
+    background:#0E2236;border-radius:37px;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  .lager-header{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 16px 10px;flex-shrink:0;
+    border-bottom:1px solid rgba(255,255,255,0.07);
+  }
+  .lager-back{
+    font-size:18px;color:rgba(255,255,255,0.5);
+    cursor:pointer;padding:2px 6px;
+  }
+  .lager-title{
+    font-size:14px;font-weight:700;color:#fff;flex:1;
+  }
+  .lager-subtitle{
+    font-family:'DM Mono',monospace;font-size:9px;
+    color:rgba(255,255,255,0.35);letter-spacing:.12em;
+  }
+  .lager-sort-bar{
+    display:flex;gap:6px;padding:8px 14px;flex-shrink:0;
+  }
+  .lager-sort-btn{
+    font-family:'DM Mono',monospace;font-size:8px;
+    letter-spacing:.1em;padding:4px 10px;border-radius:20px;
+    border:1px solid rgba(255,255,255,0.15);
+    color:rgba(255,255,255,0.45);cursor:pointer;
+    background:transparent;
+  }
+  .lager-sort-btn.active{
+    background:#1B3A57;border-color:#1B3A57;
+    color:#F5C840;
+  }
+  .lager-scroll{
+    flex:1 1 0;overflow-y:auto;padding:6px 14px 20px;
+  }
+  .lager-ort-card{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 14px;border-radius:14px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    margin-bottom:8px;cursor:pointer;
+  }
+  .lager-ort-card:active{background:rgba(255,255,255,0.1);}
+  .lager-ort-icon{font-size:22px;width:32px;text-align:center;flex-shrink:0;}
+  .lager-ort-name{font-size:13px;font-weight:600;color:#fff;}
+  .lager-ort-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+  .lager-ort-count{
+    margin-left:auto;font-family:'DM Mono',monospace;
+    font-size:10px;color:#F5C840;
+    background:rgba(245,200,64,0.12);
+    padding:3px 8px;border-radius:10px;
+  }
+  .lager-item{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;border-radius:12px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.07);
+    margin-bottom:6px;cursor:pointer;
+  }
+  .lager-item:active{background:rgba(255,255,255,0.1);}
+  .lager-item-thumb{
+    width:38px;height:38px;border-radius:8px;
+    object-fit:cover;flex-shrink:0;
+    background:rgba(255,255,255,0.08);
+  }
+  .lager-item-name{font-size:12px;font-weight:600;color:#fff;}
+  .lager-item-meta{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-left">
+      <div class="status-dot"></div>
+      <span class="status-label">kariOrg-M3</span>
+    </div>
+    <div class="status-right">
+      <div class="gps-indicator" id="gpsDot"></div>
+      <span class="status-time" id="statusTime">--:--</span>
+    </div>
+  </div>
+
+  <!-- PRESET HEADER -->
+  <div class="preset-header">
+    <div class="preset-name">Aquarium</div>
+    <div class="preset-sub">JÜRGEN REMUS · OBJEKT-PRESET</div>
+  </div>
+
+  <!-- LEFT SIDEBAR — Modul / Konfiguration / Forum -->
+  <div class="left-sidebar">
+    <div class="left-btn" id="leftModul">
+      <span class="left-btn-icon">🗂</span>
+      <span class="left-btn-label">Modul</span>
+    </div>
+    <div class="left-btn" id="leftKonfig">
+      <span class="left-btn-icon">⚙</span>
+      <span class="left-btn-label">Konfig</span>
+    </div>
+    <div class="left-btn" id="leftForum">
+      <span class="left-btn-icon">💬</span>
+      <span class="left-btn-label">Forum</span>
+    </div>
+  </div>
+
+  <!-- OVERLAY: Modul -->
+  <div id="modulOverlay" style="display:none;position:absolute;inset:0;z-index:50;background:rgba(10,26,42,0.97);border-radius:37px;flex-direction:column;padding:18px 16px 16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:18px;">
+      <span style="font-family:'DM Mono',monospace;font-size:var(--fs-sm);color:rgba(255,255,255,0.85);letter-spacing:.12em;font-weight:600;">◉ MODUL WÄHLEN</span>
+      <span id="modulClose" style="color:rgba(255,255,255,0.45);font-size:var(--fs-md);cursor:pointer;padding:4px 6px;">✕</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <!-- Haushalt — verfügbar -->
+      <div style="border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);">
+        <span style="font-size:26px;flex-shrink:0;">🏠</span>
+        <div style="flex:1;">
+          <div style="font-size:var(--fs-md);font-weight:700;color:rgba(255,255,255,0.90);letter-spacing:.03em;">Haushalt</div>
+          <div style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);letter-spacing:.08em;margin-top:3px;">Kamera · Du benennst · Du findest</div>
+        </div>
+        <span style="font-size:14px;opacity:0.35;color:#fff;">›</span>
+      </div>
+
+      <!-- Hobby — verfügbar -->
+      <div style="border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);">
+        <span style="font-size:26px;flex-shrink:0;">🔧</span>
+        <div style="flex:1;">
+          <div style="font-size:var(--fs-md);font-weight:700;color:rgba(255,255,255,0.90);letter-spacing:.03em;">Hobby</div>
+          <div style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);letter-spacing:.08em;margin-top:3px;">Kamera & Lens · Bestätigen · Forschen</div>
+        </div>
+        <span style="font-size:14px;opacity:0.35;color:#fff;">›</span>
+      </div>
+
+      <!-- Experte — aktiv -->
+      <div style="border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;background:rgba(224,64,64,0.15);border:1px solid rgba(224,64,64,0.45);">
+        <span style="font-size:26px;flex-shrink:0;">🧭</span>
+        <div style="flex:1;">
+          <div style="font-size:var(--fs-md);font-weight:700;color:#F07070;letter-spacing:.03em;">Experte</div>
+          <div style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.38);letter-spacing:.08em;margin-top:3px;">KI-Scanner · Erkennt selbst · Liefert alles</div>
+        </div>
+        <span style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:#F07070;letter-spacing:.1em;">AKTIV</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OVERLAY: Forum -->
+  <div id="forumOverlay" style="display:none;position:absolute;inset:0;z-index:50;background:rgba(10,26,42,0.97);border-radius:37px;flex-direction:column;padding:18px 16px 16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;margin-bottom:16px;">
+      <span style="font-family:'DM Mono',monospace;font-size:var(--fs-sm);color:rgba(255,255,255,0.85);letter-spacing:.12em;font-weight:600;">FORUM</span>
+      <span id="forumClose" style="color:rgba(255,255,255,0.45);font-size:var(--fs-md);cursor:pointer;padding:4px 6px;">✕</span>
+    </div>
+    <div style="flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:.45;">
+      <span style="font-size:32px;">💬</span>
+      <span style="font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:#fff;letter-spacing:.1em;">bald verfügbar</span>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR — Ghostbar -->
+  <div class="right-sidebar" id="ghostbar">
+    <div class="ghost-btn" id="safeBtn">
+      <span class="ghost-icon">🔐</span>
+      <span class="ghost-label">Safe</span>
+    </div>
+    <div class="ghost-btn" id="cloudBtn">
+      <span class="ghost-icon">☁️</span>
+      <span class="ghost-label">Cloud</span>
+    </div>
+    <div class="ghost-btn">
+      <span class="ghost-icon">📦</span>
+      <span class="ghost-label">Boxen</span>
+    </div>
+    <div class="ghost-btn">
+      <span class="ghost-icon">📎</span>
+      <span class="ghost-label">Dok.</span>
+    </div>
+    <div class="ghost-btn" style="opacity:0.35;">
+      <span class="ghost-icon">＋</span>
+      <span class="ghost-label">mehr</span>
+    </div>
+    <div class="ghost-btn ghost-fix" id="zahnradBtn">
+      <span class="ghost-icon">⚙</span>
+      <span class="ghost-label">einst.</span>
+    </div>
+  </div>
+
+  <!-- EINSTELLUNGS-OVERLAY -->
+  <div id="einstellOverlay">
+    <div class="einstell-bar">
+      <div class="einstell-title">⚙ EINSTELLUNGEN</div>
+      <div class="einstell-close" id="einstellClose">✕</div>
+    </div>
+    <div class="einstell-scroll">
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Profil</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Nutzer wechseln</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Modul</span>
+          <span><span class="einstell-badge">Haushalt</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Darstellung</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Design & Farbe</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Schrift & Größe</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Listen-Ansicht</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Ghostbar</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Buttons konfigurieren</span>
+          <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Wartungs-Ampel</div>
+        <div class="einstell-row" id="ampelGelbRow">
+          <span class="einstell-row-label">🟡 Gelb ab</span>
+          <span><span class="einstell-badge" id="ampelGelbBadge">90 Tage</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row" id="ampelRotRow">
+          <span class="einstell-row-label">🔴 Rot ab</span>
+          <span><span class="einstell-badge" id="ampelRotBadge">30 Tage</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Über</div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">kariOrg</span>
+          <span><span class="einstell-badge">v0.3-m3</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Karioli · Experte-Modul</span>
+          <span class="einstell-row-arrow">›</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content">
+
+    <!-- HOME-Ansicht: Scanner + Mic -->
+    <div class="screen active" id="s-home">
+      <div class="scanner-wrap">
+        <div class="scanner-btn modus-ai" id="scannerBtn">KI</div>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <div id="modeKamera" onclick="setMode('kamera')" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:14px;font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.08em;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.07);">📸 Foto</div>
+          <div id="modeLens" onclick="setMode('lens')" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:14px;font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.08em;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.07);">🔍 Lens</div>
+          <div id="modeAI" onclick="setMode('ai')" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:14px;font-family:'DM Mono',monospace;font-size:var(--fs-xs);letter-spacing:.08em;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;border:1px solid rgba(224,64,64,0.6);color:var(--blue);background:rgba(255,255,255,0.88);font-weight:700;">🧠 KI</div>
+        </div>
+        <div class="mic-btn" id="suchOeffnen">
+          <span class="mic-icon">🎙️</span>
+          <span class="mic-label">Suche</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCH-OVERLAY -->
+    <div id="suchOverlay">
+      <div class="such-bar">
+        <input class="such-input" id="suchInput" type="text" placeholder="Suchen …" autocomplete="off"/>
+        <div class="such-close" id="suchClose">✕</div>
+      </div>
+
+      <div class="such-mic" id="suchMic">
+        <span style="font-size:var(--fs-md)">🎙️</span>
+        <span class="such-mic-label" id="suchMicLabel">Sprechen</span>
+      </div>
+      <div class="such-ergebnis" id="suchErgebnis">
+        <div class="such-leer" id="suchLeer">
+          <span class="such-leer-label">Kein Treffer</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KAMERA-Screen -->
+    <div class="screen" id="s-kamera">
+      <div id="kameraWrap">
+        <video id="kameraVideo" autoplay playsinline muted></video>
+        <canvas id="kameraCanvas"></canvas>
+        <div id="kameraHint">Antippen zum Markieren</div>
+        <div id="markerDot" class="marker-dot"></div>
+      </div>
+    </div>
+
+    <!-- THEMEN-Tab -->
+    <div class="screen" id="s-themen">
+      <div class="themen-grid">
+        <div class="themen-card active-preset" data-preset="Aquarium">
+          <span class="tc-icon">🐠</span>
+          <div class="tc-name">Aquarium</div>
+          <div class="tc-count">3 Aquarien</div>
+        </div>
+        <div class="themen-card" data-preset="Bestand">
+          <span class="tc-icon">📋</span>
+          <div class="tc-name">Bestand</div>
+          <div class="tc-count" id="bestandCount">— Einträge</div>
+        </div>
+        <div class="themen-card" data-preset="Zarges">
+          <span class="tc-icon">📦</span>
+          <div class="tc-name">Zarges-Boxen</div>
+          <div class="tc-count">25 Boxen</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTE-Tab -->
+    <div class="screen" id="s-liste">
+      <div class="liste-header" id="listeHeader">MARKER · 0 Einträge</div>
+      <div class="liste-scroll" id="listeScroll">
+        <div class="liste-leer" id="listeLeer">
+          <span class="ph-icon">📋</span>
+          <span class="ph-label" style="opacity:1">Noch keine Marker</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL-OVERLAY -->
+    <div id="detailOverlay">
+      <div class="detail-bar">
+        <div class="detail-name" id="detailName"></div>
+        <div class="detail-close" id="detailClose">✕</div>
+      </div>
+      <div class="detail-wrap" id="detailWrap">
+        <img id="detailImg" src="" alt=""/>
+        <div class="detail-dot" id="detailDot"></div>
+      </div>
+      <div class="detail-datum" id="detailDatum"></div>
+    </div>
+
+    <!-- ARCHIV-Tab -->
+    <div class="screen" id="s-archiv">
+      <div class="archiv-bar">
+        <input class="archiv-input" id="archivInput" type="text" placeholder="Alles durchsuchen …" autocomplete="off"/>
+      </div>
+      <div class="archiv-sort">
+        <div class="sort-btn active" id="sortDatum">Datum</div>
+        <div class="sort-btn" id="sortOrt">Ort</div>
+        <div class="sort-btn" id="sortArt">Art</div>
+      </div>
+      <div class="archiv-scroll" id="archivScroll">
+        <div class="archiv-leer" id="archivLeer">
+          <span class="ph-icon">📖</span>
+          <span class="ph-label" style="opacity:1;font-family:'DM Mono',monospace;font-size:10px;color:#fff;letter-spacing:.1em;">Noch nichts archiviert</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BENENNUNGS-MODAL -->
+  <div id="benennModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">Marker benennen</div>
+      <input id="benennInput" class="modal-input" type="text" placeholder="z.B. Teddys …" autocomplete="off"/>
+      <div class="modal-buttons">
+        <div class="modal-btn secondary" id="benennAbbruch">Abbruch</div>
+        <div class="modal-btn primary" id="benennOk">Speichern</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="tab-btn active" id="tab-home" onclick="switchTab('home')">
+      <span class="tab-icon">🏠</span>Start
+    </div>
+    <div class="tab-btn" id="tab-themen" onclick="switchTab('themen')">
+      <span class="tab-icon">🗂️</span>Presets
+    </div>
+    <div class="tab-btn" id="tab-liste" onclick="switchTab('liste')">
+      <span class="tab-icon">📋</span>Liste
+    </div>
+    <div class="tab-btn" id="tab-archiv" onclick="switchTab('archiv')">
+      <span class="tab-icon">📖</span>Archiv
+    </div>
+  </div>
+  <div class="bottom-brand">Karioli</div>
+</div>
+
+<script>
+  // ── Marker-Speicher mit localStorage (Scheibchen 6)
+  function ladeAusStorage(){
+    try{ return JSON.parse(localStorage.getItem('kariorg_marker') || '[]'); }
+    catch(e){ return []; }
+  }
+  function speichereInStorage(){
+    try{ localStorage.setItem('kariorg_marker', JSON.stringify(markerSpeicher)); }
+    catch(e){}
+  }
+  // ── Ampel-Konfiguration (konfigurierbar, Defaults)
+  var ampelConfig = { gelbTage: 90, rotTage: 30 };
+
+  // ── Ampel berechnen
+  function ampelStatus(naechsterService){
+    if(!naechsterService) return null;
+    var heute = new Date();
+    var ziel  = new Date(naechsterService);
+    var diffTage = Math.round((ziel - heute) / 86400000);
+    if(diffTage < 0)                        return { farbe:'#E04040', symbol:'🔴', text:'überfällig' };
+    if(diffTage <= ampelConfig.rotTage)     return { farbe:'#E04040', symbol:'🔴', text:'in ' + diffTage + ' Tagen' };
+    if(diffTage <= ampelConfig.gelbTage)    return { farbe:'#F0C040', symbol:'🟡', text:'in ' + diffTage + ' Tagen' };
+    return { farbe:'#4AE040', symbol:'🟢', text:'in ' + diffTage + ' Tagen' };
+  }
+
+  // ── Mock-Daten Tauchausrüstung
+  var mockDaten = [
+    { name:'Wetsuit 5mm', ort:'Garage · Zarges-Box 4', art:'Kleidung', datum:'2024-03-10', preset:'Tauchausrüstung', naechsterService:null,       serienNr:null,          letzterService:'2024-03-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🤿</text></svg>' },
+    { name:'Jacket Scubapro Hydros', ort:'Garage · Zarges-Box 4', art:'Kleidung', datum:'2023-11-05', preset:'Tauchausrüstung', naechsterService:'2026-11-05', serienNr:'SP-2023-44821', letzterService:'2023-11-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🦺</text></svg>' },
+    { name:'Handschuhe 3mm', ort:'Garage · Zarges-Box 4', art:'Kleidung', datum:'2024-06-01', preset:'Tauchausrüstung', naechsterService:null,       serienNr:null,          letzterService:'2024-06-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🧤</text></svg>' },
+    { name:'Haube 5mm', ort:'Garage · Zarges-Box 4', art:'Kleidung', datum:'2024-06-01', preset:'Tauchausrüstung', naechsterService:null,       serienNr:null,          letzterService:'2024-06-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🧢</text></svg>' },
+    { name:'Flossen Mares Avanti', ort:'Garage · Zarges-Box 4', art:'Kleidung', datum:'2022-08-14', preset:'Tauchausrüstung', naechsterService:null,       serienNr:null,          letzterService:'2022-08-14', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🐟</text></svg>' },
+    { name:'Atemregler Apeks XTX50', ort:'Garage · Zarges-Box 6', art:'Technik', datum:'2022-05-20', preset:'Tauchausrüstung', naechsterService:'2026-05-20', serienNr:'AX-2022-09341', letzterService:'2024-05-20', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⚙️</text></svg>' },
+    { name:'Tauchcomputer Garmin MK2', ort:'Garage · Zarges-Box 6', art:'Technik', datum:'2021-12-03', preset:'Tauchausrüstung', naechsterService:'2026-12-03', serienNr:'GM-2021-77612', letzterService:'2024-12-03', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⌚</text></svg>' },
+    { name:'Messer Cressi Borg', ort:'Garage · Zarges-Box 7', art:'Werkzeug', datum:'2023-04-17', preset:'Tauchausrüstung', naechsterService:null,       serienNr:null,          letzterService:'2023-04-17', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔪</text></svg>' },
+    { name:'Lampe Scubalamp V6K', ort:'Garage · Zarges-Box 6', art:'Werkzeug', datum:'2023-09-22', preset:'Tauchausrüstung', naechsterService:null,       serienNr:'SL-2023-30041', letzterService:'2023-09-22', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔦</text></svg>' },
+    { name:'Stahlflasche 12L', ort:'Garage · Zarges-Box 7', art:'Flasche', datum:'2020-07-11', preset:'Tauchausrüstung', naechsterService:'2026-07-11', serienNr:'TÜV-2024-FL-0892', letzterService:'2024-07-11', barcode:'4012345678901', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🫙</text></svg>' },
+
+    // ── Box 1 · Wohnmobil ──────────────────────────────────────────────
+    { name:'Stromkabel 230V 10m', ort:'Garage · Zarges-Box 1', art:'Elektrik', datum:'2022-04-10', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2022-04-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔌</text></svg>' },
+    { name:'CEE-Adapter Camping', ort:'Garage · Zarges-Box 1', art:'Elektrik', datum:'2022-04-10', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2022-04-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔋</text></svg>' },
+    { name:'Wasserkanister 20L', ort:'Garage · Zarges-Box 1', art:'Camping', datum:'2021-06-15', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2021-06-15', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🪣</text></svg>' },
+    { name:'Schlauch Frischwasser 5m', ort:'Garage · Zarges-Box 1', art:'Camping', datum:'2021-06-15', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2021-06-15', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🚿</text></svg>' },
+
+    // ── Box 2 · Wohnmobil ──────────────────────────────────────────────
+    { name:'Campingkocher 2-flammig', ort:'Garage · Zarges-Box 2', art:'Camping', datum:'2020-05-01', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2020-05-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🍳</text></svg>' },
+    { name:'Gaskartusche 450g (×4)', ort:'Garage · Zarges-Box 2', art:'Camping', datum:'2025-03-12', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2025-03-12', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔥</text></svg>' },
+    { name:'Campinggeschirr-Set 4P', ort:'Garage · Zarges-Box 2', art:'Camping', datum:'2020-05-01', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2020-05-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🍽️</text></svg>' },
+    { name:'Faltbare Campingstühle (×2)', ort:'Garage · Zarges-Box 2', art:'Camping', datum:'2019-08-20', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2019-08-20', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🪑</text></svg>' },
+
+    // ── Box 3 · Wohnmobil ──────────────────────────────────────────────
+    { name:'Keilunterlagen Gummi (×4)', ort:'Garage · Zarges-Box 3', art:'Zubehör', datum:'2021-03-05', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2021-03-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔲</text></svg>' },
+    { name:'Abwasserschlauch 3m', ort:'Garage · Zarges-Box 3', art:'Zubehör', datum:'2021-03-05', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2021-03-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">💧</text></svg>' },
+    { name:'Zeltteppich 2,5×3m', ort:'Garage · Zarges-Box 3', art:'Camping', datum:'2022-05-20', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2022-05-20', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🟩</text></svg>' },
+
+    // ── Box 5 · Wohnmobil ──────────────────────────────────────────────
+    { name:'Markise Thule Omnistor', ort:'Garage · Zarges-Box 5', art:'Zubehör', datum:'2023-04-01', preset:'Wohnmobil', naechsterService:null, serienNr:'TH-2023-OM-5102', letzterService:'2023-04-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛱️</text></svg>' },
+    { name:'Heringe Stahl (×12)', ort:'Garage · Zarges-Box 5', art:'Camping', datum:'2019-06-10', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2019-06-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📍</text></svg>' },
+    { name:'Spannseile (×6)', ort:'Garage · Zarges-Box 5', art:'Camping', datum:'2019-06-10', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2019-06-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🪢</text></svg>' },
+
+    // ── Box 8 · Wohnmobil ──────────────────────────────────────────────
+    { name:'Navigationssystem Garmin Camper 895', ort:'Garage · Zarges-Box 8', art:'Elektrik', datum:'2024-02-14', preset:'Wohnmobil', naechsterService:null, serienNr:'GRM-2024-C895-0041', letzterService:'2024-02-14', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🗺️</text></svg>' },
+    { name:'Rückfahrkamera kabellos', ort:'Garage · Zarges-Box 8', art:'Elektrik', datum:'2023-07-08', preset:'Wohnmobil', naechsterService:null, serienNr:null, letzterService:'2023-07-08', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📷</text></svg>' },
+    { name:'Solarpanel faltbar 120W', ort:'Garage · Zarges-Box 8', art:'Elektrik', datum:'2024-03-22', preset:'Wohnmobil', naechsterService:null, serienNr:'SP-2024-120W-7731', letzterService:'2024-03-22', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">☀️</text></svg>' },
+
+    // ── Box 9 · Werkzeug ───────────────────────────────────────────────
+    { name:'Akkubohrschrauber Bosch GSR 18V', ort:'Garage · Zarges-Box 9', art:'Werkzeug', datum:'2021-10-05', preset:'Werkzeug', naechsterService:null, serienNr:'BSH-2021-GSR-3312', letzterService:'2021-10-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔧</text></svg>' },
+    { name:'Bit-Set 32-tlg.', ort:'Garage · Zarges-Box 9', art:'Werkzeug', datum:'2021-10-05', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2021-10-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🪛</text></svg>' },
+    { name:'Wasserwaage 60cm', ort:'Garage · Zarges-Box 9', art:'Werkzeug', datum:'2018-03-14', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2018-03-14', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📏</text></svg>' },
+    { name:'Zollstock 2m', ort:'Garage · Zarges-Box 9', art:'Werkzeug', datum:'2018-03-14', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2018-03-14', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📐</text></svg>' },
+
+    // ── Box 10 · Elkes Kram ────────────────────────────────────────────
+    { name:'Fotoalbum Familie 1980–1995', ort:'Garage · Zarges-Box 10', art:'Erinnerung', datum:'2015-01-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2015-01-01', notiz:'Urlaube, Kindergeburtstage, alte Wohnung Hannover', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📷</text></svg>' },
+    { name:'Fotoalbum Hochzeit 1988', ort:'Garage · Zarges-Box 10', art:'Erinnerung', datum:'2015-01-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2015-01-01', notiz:'Hochzeit Jürgen & Elke, Standesamt + Feier', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">💍</text></svg>' },
+    { name:'Marionette Kasper', ort:'Garage · Zarges-Box 10', art:'Spielzeug', datum:'2015-01-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2015-01-01', notiz:'Handgemacht, Flohmarkt Lüneburg 1992', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🪆</text></svg>' },
+    { name:'Marionette Hexe', ort:'Garage · Zarges-Box 10', art:'Spielzeug', datum:'2015-01-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2015-01-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🧙</text></svg>' },
+    { name:'Aquarellbilder (×7, gerollt)', ort:'Garage · Zarges-Box 10', art:'Kunst', datum:'2015-01-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2015-01-01', notiz:'Eigene Arbeiten Elke, Volkshochschule 1990–1998', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🎨</text></svg>' },
+    { name:'Kinderzeichnungen Nina (Mappe)', ort:'Garage · Zarges-Box 10', art:'Kunst', datum:'2015-01-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2015-01-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">✏️</text></svg>' },
+
+    // ── Box 11 · Haushalt / Saisonal ──────────────────────────────────
+    { name:'Weihnachtsdeko Kugeln (×24)', ort:'Garage · Zarges-Box 11', art:'Saisonal', datum:'2020-12-28', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2020-12-28', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🎄</text></svg>' },
+    { name:'Lichterkette 10m (×2)', ort:'Garage · Zarges-Box 11', art:'Saisonal', datum:'2020-12-28', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2020-12-28', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">✨</text></svg>' },
+    { name:'Adventsgesteck Formen', ort:'Garage · Zarges-Box 11', art:'Saisonal', datum:'2021-01-05', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2021-01-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🕯️</text></svg>' },
+
+    // ── Box 12 · Elektrik ──────────────────────────────────────────────
+    { name:'Verlängerungskabel 25m', ort:'Garage · Zarges-Box 12', art:'Elektrik', datum:'2019-09-03', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2019-09-03', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔌</text></svg>' },
+    { name:'Steckdosenleiste 6-fach', ort:'Garage · Zarges-Box 12', art:'Elektrik', datum:'2019-09-03', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2019-09-03', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⚡</text></svg>' },
+    { name:'Ersatzlampen Sortiment', ort:'Garage · Zarges-Box 12', art:'Elektrik', datum:'2022-11-10', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2022-11-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">💡</text></svg>' },
+
+    // ── Box 13 · Elkes Kram ────────────────────────────────────────────
+    { name:'Stilettos schwarz Gr. 38', ort:'Garage · Zarges-Box 13', art:'Kleidung', datum:'2016-06-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2016-06-01', notiz:'Für besondere Anlässe, kaum getragen', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">👠</text></svg>' },
+    { name:'Stilettos rot Gr. 38', ort:'Garage · Zarges-Box 13', art:'Kleidung', datum:'2018-03-08', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2018-03-08', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">👠</text></svg>' },
+    { name:'Bücher Klassiker (×12)', ort:'Garage · Zarges-Box 13', art:'Buch', datum:'2016-06-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2016-06-01', notiz:'u.a. Fontane, Storm, Kästner, Zweig', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📚</text></svg>' },
+    { name:'Kinderbücher (×8)', ort:'Garage · Zarges-Box 13', art:'Buch', datum:'2016-06-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2016-06-01', notiz:'Ninas Bücher aus der Grundschulzeit', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📖</text></svg>' },
+    { name:'Spielzeug Holzeisenbahn', ort:'Garage · Zarges-Box 13', art:'Spielzeug', datum:'2016-06-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2016-06-01', notiz:'Komplett-Set mit Schienen und Brücke', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🚂</text></svg>' },
+    { name:'Spielzeug Kaufmannsladen', ort:'Garage · Zarges-Box 13', art:'Spielzeug', datum:'2016-06-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2016-06-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🏪</text></svg>' },
+    { name:'Marionette König', ort:'Garage · Zarges-Box 13', art:'Spielzeug', datum:'2016-06-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2016-06-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">👑</text></svg>' },
+
+    // ── Box 14 · Sport ─────────────────────────────────────────────────
+    { name:'Ski Atomic Redster 170cm', ort:'Garage · Zarges-Box 14', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:'2027-01-01', serienNr:null, letzterService:'2025-01-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛷️</text></svg>' },
+    { name:'Skischuhe Tecnica 42', ort:'Garage · Zarges-Box 14', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2020-12-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🥾</text></svg>' },
+    { name:'Skihelm Uvex 56–59cm', ort:'Garage · Zarges-Box 14', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2020-12-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛑️</text></svg>' },
+
+    // ── Box 15 · Haushalt Ersatz ──────────────────────────────────────
+    { name:'Bettdecken 135×200 (×2)', ort:'Garage · Zarges-Box 15', art:'Haushalt', datum:'2023-02-10', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2023-02-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🛏️</text></svg>' },
+    { name:'Kopfkissen (×4)', ort:'Garage · Zarges-Box 15', art:'Haushalt', datum:'2023-02-10', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2023-02-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">😴</text></svg>' },
+    { name:'Handtücher Gäste-Set', ort:'Garage · Zarges-Box 15', art:'Haushalt', datum:'2021-05-15', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2021-05-15', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🏊</text></svg>' },
+
+    // ── Box 16 · Farbe & Renovierung ──────────────────────────────────
+    { name:'Wandfarbe Weiß 10L', ort:'Garage · Zarges-Box 16', art:'Renovierung', datum:'2024-04-05', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2024-04-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🪣</text></svg>' },
+    { name:'Pinsel-Set Malerqualität', ort:'Garage · Zarges-Box 16', art:'Renovierung', datum:'2024-04-05', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2024-04-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🖌️</text></svg>' },
+    { name:'Malerrolle + Teleskopstange', ort:'Garage · Zarges-Box 16', art:'Renovierung', datum:'2024-04-05', preset:'Werkzeug', naechsterService:null, serienNr:null, letzterService:'2024-04-05', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔨</text></svg>' },
+
+    // ── Box 17 · Garten ────────────────────────────────────────────────
+    { name:'Gartenschlauch 20m', ort:'Garage · Zarges-Box 17', art:'Garten', datum:'2022-04-20', preset:'Garten', naechsterService:null, serienNr:null, letzterService:'2022-04-20', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🌿</text></svg>' },
+    { name:'Sprühkopf-Set (×5)', ort:'Garage · Zarges-Box 17', art:'Garten', datum:'2022-04-20', preset:'Garten', naechsterService:null, serienNr:null, letzterService:'2022-04-20', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">💦</text></svg>' },
+    { name:'Handschuhe Garten (×3 Paar)', ort:'Garage · Zarges-Box 17', art:'Garten', datum:'2022-04-20', preset:'Garten', naechsterService:null, serienNr:null, letzterService:'2022-04-20', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🧤</text></svg>' },
+
+    // ── Box 18 · Elektronik Archiv ────────────────────────────────────
+    { name:'Laptop Dell Latitude (alt)', ort:'Garage · Zarges-Box 18', art:'Elektronik', datum:'2023-08-01', preset:'Haushalt', naechsterService:null, serienNr:'DELL-LAT-2018-0044', letzterService:'2023-08-01', notiz:'Defektes Display, Festplatte entnommen', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">💻</text></svg>' },
+    { name:'Kabel-Box gemischt', ort:'Garage · Zarges-Box 18', art:'Elektronik', datum:'2023-08-01', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2023-08-01', notiz:'HDMI, USB, Netzwerkkabel, diverse', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔌</text></svg>' },
+    { name:'Drucker Canon Pixma (alt)', ort:'Garage · Zarges-Box 18', art:'Elektronik', datum:'2023-08-01', preset:'Haushalt', naechsterService:null, serienNr:'CNX-PIX-2016-1182', letzterService:'2023-08-01', notiz:'Funktioniert noch, zu laut', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🖨️</text></svg>' },
+
+    // ── Box 19 · Fahrrad-Zubehör ──────────────────────────────────────
+    { name:'Fahrradtaschen Ortlieb (×2)', ort:'Garage · Zarges-Box 19', art:'Sport', datum:'2021-05-10', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2021-05-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🚲</text></svg>' },
+    { name:'Fahrradschloss Abus Granit', ort:'Garage · Zarges-Box 19', art:'Sport', datum:'2021-05-10', preset:'Sport', naechsterService:null, serienNr:'AB-2021-GR-5501', letzterService:'2021-05-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔐</text></svg>' },
+    { name:'Flickzeug-Set + Pumpe', ort:'Garage · Zarges-Box 19', art:'Sport', datum:'2021-05-10', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2021-05-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🛠️</text></svg>' },
+
+    // ── Box 20 · Küche Ersatz ─────────────────────────────────────────
+    { name:'Fondue-Set 8P', ort:'Garage · Zarges-Box 20', art:'Haushalt', datum:'2019-12-24', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2019-12-24', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🫕</text></svg>' },
+    { name:'Raclette-Grill 8P', ort:'Garage · Zarges-Box 20', art:'Haushalt', datum:'2018-12-26', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2018-12-26', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🧀</text></svg>' },
+    { name:'Thermoskanne 1,5L', ort:'Garage · Zarges-Box 20', art:'Haushalt', datum:'2020-02-01', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2020-02-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">☕</text></svg>' },
+
+    // ── Box 21 · Büro & Archiv ────────────────────────────────────────
+    { name:'Aktenordner Steuern 2015–2020', ort:'Garage · Zarges-Box 21', art:'Dokument', datum:'2021-01-10', preset:'Büro', naechsterService:null, serienNr:null, letzterService:'2021-01-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📁</text></svg>' },
+    { name:'Aktenordner Versicherungen', ort:'Garage · Zarges-Box 21', art:'Dokument', datum:'2021-01-10', preset:'Büro', naechsterService:null, serienNr:null, letzterService:'2021-01-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">📋</text></svg>' },
+    { name:'Aktenordner Haus & Grundstück', ort:'Garage · Zarges-Box 21', art:'Dokument', datum:'2021-01-10', preset:'Büro', naechsterService:null, serienNr:null, letzterService:'2021-01-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🏠</text></svg>' },
+
+    // ── Box 22 · Spielzeug & Gesellschaft ────────────────────────────
+    { name:'Gesellschaftsspiele (×6)', ort:'Garage · Zarges-Box 22', art:'Spielzeug', datum:'2022-12-26', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2022-12-26', notiz:'Catan, Carcassonne, Mensch-ärgere-dich, Trivial Pursuit, Jenga, Uno', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🎲</text></svg>' },
+    { name:'Puzzles 1000 Teile (×3)', ort:'Garage · Zarges-Box 22', art:'Spielzeug', datum:'2022-12-26', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2022-12-26', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🧩</text></svg>' },
+
+    // ── Box 23 · Kfz-Zubehör ──────────────────────────────────────────
+    { name:'Schneeketten Gr. 235/60 R17', ort:'Garage · Zarges-Box 23', art:'Kfz', datum:'2022-10-01', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2022-10-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛓️</text></svg>' },
+    { name:'Starthilfekabel 25mm²', ort:'Garage · Zarges-Box 23', art:'Kfz', datum:'2019-11-15', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2019-11-15', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🚗</text></svg>' },
+    { name:'Warndreieck + Weste Set', ort:'Garage · Zarges-Box 23', art:'Kfz', datum:'2019-11-15', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2019-11-15', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⚠️</text></svg>' },
+
+    // ── Box 24 · Reinigung & Haushalt ─────────────────────────────────
+    { name:'Hochdruckreiniger Kärcher K4', ort:'Garage · Zarges-Box 24', art:'Haushalt', datum:'2021-04-10', preset:'Haushalt', naechsterService:'2027-04-10', serienNr:'KAR-2021-K4-8871', letzterService:'2021-04-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">💦</text></svg>' },
+    { name:'Zubehör Kärcher (Düsen, Schlauch)', ort:'Garage · Zarges-Box 24', art:'Haushalt', datum:'2021-04-10', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2021-04-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🔩</text></svg>' },
+
+    // ── Box 25 · Diverses ──────────────────────────────────────────────
+    { name:'Schlafsäcke (×2)', ort:'Garage · Zarges-Box 25', art:'Camping', datum:'2020-06-01', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2020-06-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🛌</text></svg>' },
+    { name:'Isomatten (×2)', ort:'Garage · Zarges-Box 25', art:'Camping', datum:'2020-06-01', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2020-06-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🟦</text></svg>' },
+    { name:'Erste-Hilfe-Koffer DIN 13169', ort:'Garage · Zarges-Box 25', art:'Sicherheit', datum:'2023-01-15', preset:'Haushalt', naechsterService:'2028-01-15', serienNr:null, letzterService:'2023-01-15', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🩹</text></svg>' },
+  ];
+
+
+  // ── Mock-Daten Aquarium
+  var mockAquarium = [
+    // ── Aquarium A · Wohnzimmer · Süßwasser ──────────────────────────────
+    { name:'Joe', ort:'Wohnzimmer · Aquarium A', art:'Discus', datum:'2023-06-14', preset:'Aquarium',
+      notiz:'Rot-Türkis · Symphysodon discus · Hauptbecken links',
+      gewicht:'210g', kaufdatum:'2023-06-14',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Mitzumi', ort:'Wohnzimmer · Aquarium A', art:'Discus', datum:'2023-06-14', preset:'Aquarium',
+      notiz:'Braun-Türkis · ruhiger Charakter · frisst als erster',
+      gewicht:'185g', kaufdatum:'2023-06-14',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Heizstab Eheim 200W', ort:'Wohnzimmer · Aquarium A', art:'Technik', datum:'2022-03-01', preset:'Aquarium',
+      notiz:'Eingestellt auf 29°C · Becken Mitte',
+      gewicht:null, kaufdatum:'2022-03-01',
+      naechsterService:'2027-03-01', serienNr:'EH-2022-HZ-441', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🌡️</text></svg>' },
+    { name:'Filter Eheim 2217', ort:'Wohnzimmer · Aquarium A · außen', art:'Technik', datum:'2021-11-15', preset:'Aquarium',
+      notiz:'Außenfilter · Filtermasse zuletzt 2025-01',
+      gewicht:null, kaufdatum:'2021-11-15',
+      naechsterService:'2026-09-15', serienNr:'EH-2021-FI-882', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>⚙️</text></svg>' },
+    { name:'Lampe Aqua Medic Ocean Light 250W', ort:'Wohnzimmer · Aquarium A · oben', art:'Technik', datum:'2020-06-01', preset:'Aquarium',
+      notiz:'Erworben: 1. Juni 2020 · Aquarium Kessler Hamburg · HQI-Brenner 250W · 10.000 K · Brenner alle 12 Monate tauschen · letzte Brenner-Änderung: Jan 2025 · Photoperiode: 10h Licht täglich',
+      gewicht:null, kaufdatum:'2020-06-01',
+      naechsterService:'2026-01-01', serienNr:'AM-2020-OL-334', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>💡</text></svg>' },
+    { name:'Osmoseanlage Aqua Medic 190', ort:'Wohnzimmer · Aquarium A · Unterschrank', art:'Technik', datum:'2019-03-10', preset:'Aquarium',
+      notiz:'Erworben: 10. März 2019 · Aquaristik Online · Membran alle 2 Jahre wechseln · Vorfilter alle 6 Monate · letzte Membrane: Sep 2024 · produziert 190L/Tag · Leitungswasser TDS: 320 ppm → Osmosewasser: 4 ppm',
+      gewicht:null, kaufdatum:'2019-03-10',
+      naechsterService:'2026-09-01', serienNr:'AM-2019-OS-117', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🚰</text></svg>' },
+    { name:'Strömungspumpe Tunze 6055', ort:'Wohnzimmer · Aquarium A · hinten links', art:'Technik', datum:'2021-04-15', preset:'Aquarium',
+      notiz:'Erworben: 15. April 2021 · Reefworld Köln · 5500 L/h · alle 6 Monate reinigen · Impeller alle 2 Jahre · läuft auf Stufe 7 von 10 · Reinigung zuletzt: März 2026',
+      gewicht:null, kaufdatum:'2021-04-15',
+      naechsterService:'2026-09-15', serienNr:'TZ-2021-SP-6055', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🌀</text></svg>' },
+    { name:'Thermometer Digital JBL', ort:'Wohnzimmer · Aquarium A · Scheibe vorn', art:'Technik', datum:'2022-01-20', preset:'Aquarium',
+      notiz:'Erworben: 20. Januar 2022 · Zooplus · Solltemperatur: 28–29 °C · Alarm ab 31 °C · Batterie jährlich wechseln · zuletzt gewechselt: Jan 2026',
+      gewicht:null, kaufdatum:'2022-01-20',
+      naechsterService:'2027-01-01', serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🌡️</text></svg>' },
+    { name:'Vorrat Meersalz Tropic Marin Pro-Reef', ort:'Wohnzimmer · Aquarium A · Unterschrank', art:'Vorrat', datum:'2026-03-01', preset:'Aquarium',
+      notiz:'Erworben: 1. März 2026 · Aquaristik Online · 25 kg Eimer · Verbrauch ca. 2 kg/Monat bei Wasserwechsel · aktueller Bestand: ca. 18 kg · Zielwert Salzgehalt: 1.025 sg',
+      gewicht:'18000g', kaufdatum:'2026-03-01',
+      naechsterService:null, serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🧂</text></svg>' },
+    { name:'Vorrat Korallensand 0–2mm', ort:'Wohnzimmer · Aquarium A · Schrank unten', art:'Vorrat', datum:'2023-05-01', preset:'Aquarium',
+      notiz:'Erworben: 1. Mai 2023 · Aquaristik Online · Körnung 0–2 mm · Bestand ca. 8 kg · Bodenschicht ca. 6 cm · bei Nachfüllbedarf vorab wässern und waschen',
+      gewicht:'8000g', kaufdatum:'2023-05-01',
+      naechsterService:null, serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🏖️</text></svg>' },
+    // ── Aquarium B · Wohnzimmer · Meerwasser ──────────────────────────────
+    { name:'Seepferdchen', ort:'Wohnzimmer · Aquarium B', art:'Meerwasser', datum:'2024-04-10', preset:'Aquarium',
+      notiz:'Erworben: 10. April 2024 · Aquarium Kessler Hamburg · Hippocampus kuda · Gelb · Pärchen · Männchen trägt Junge · Becken Mitte rechts an Gorgonie · Lebend-Artemia täglich · Indonesien / Pazifik · Gekauft: Aquarium Kessler Hamburg · Anspruchsvoll — braucht Ruhe und Strömung',
+      gewicht:'18g', kaufdatum:'2024-04-10',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Feuerfisch', ort:'Wohnzimmer · Aquarium B', art:'Meerwasser', datum:'2024-05-03', preset:'Aquarium',
+      notiz:'Erworben: 3. Mai 2024 · Meeresaquaristik Schmidt Bremen · Pterois volitans · Indopazifik / Rotes Meer · Rückenstacheln giftig — kein direkter Handkontakt · frisst lebende Kleinfische und Garnelen · Einzelhaltung empfohlen · Becken oben links · Gekauft: Meeresaquaristik Schmidt Bremen · mind. 500L Beckenvolumen',
+      gewicht:'380g', kaufdatum:'2024-05-03',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Gelber Doktorfisch', ort:'Wohnzimmer · Aquarium B', art:'Meerwasser', datum:'2024-03-15', preset:'Aquarium',
+      notiz:'Erworben: 15. März 2024 · Reefworld Köln · Zebrasoma flavescens · Hawaii / Pazifik · Algenfresser · frisst Diatom- und Fadenalgen sehr effektiv · braucht viel Schwimmraum · Skalpellstachel am Schwanzstiel scharf · sehr lebhaft · Gekauft: Reefworld Köln · Wasserwerte stabil halten, empfindlich bei Nitrat',
+      gewicht:'95g', kaufdatum:'2024-03-15',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCABQAFADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwBmsLqF5fJZRQrNZNdiIMWG8pnI9wB/nrXJ+JPtUHiVzdwbZQ22NGHRQM59+tdfpOk2+nXP9siWSKK2idGSUkky92HquOfyrjNQ1BtRSe+cbpTI23PO1WHQfgKtqyLUmU7TDwBioDsSm4jPOCc1f0syw2yXeP8AUhurdD/k1X0GSKRZLaVWySXiYdmwRz7c1s6VZxzXd5YyNvQMjlhxx3p8l4t+aRjOdm0+1ynrGh3E2madKJGeWdmzGBnbu5H8q1NN+FF5cmzmu5PLjdszRqPmC+3vXW6ZpkN3JBc2sbSwxqp3M3Oe+K6kTyRonmTRKw+8OvHpV4jMcJhFGM5JXX9OxyQjXq35V1OK1z4V6dfXEbaeosolUhlXueMZz9P1rznxRov/AAi+ty2UEwlQoCjHk4Pr75zXuc9/G+5Y7qPJ4wxNeX6zoN3f39zdamrWkzSYilk+eKRegAYZAPtWmEzHC4l8saiv06P8ROlWov307HAxxGUjPAxjNPWAxSq0qEp7d69Q8LfDi0e1N1robDn5IFJXj1OO59K7DTvDOi6bCbW105JUbPMi72APYk12SlCLs90DqvojlPFEkcfhq5iMqnZEUVRxkHv9c4OPTFc14W0KKawl1HVz5WmwhXOTjzCOo9cAHk+4A613ureEbDVrJIriee3ijkzLJgbpgOwHbnvUNx/ZUITcDcWsaARWrANHGF6cfxEe/BPqa852sjvvvY4OO3S1tbjUVsJYbSViYBIhU+WWwMH2B61oaFazXGuT2diyCW5tNsbseOerH6DNN1LXb/xHbXN5IN9rEwVbcdShIB6d+nTp2rc8J6BdaHZyapqCtDPLEIoIm4ZUzkkjsT6V5uOxf1alKSevRef/AAAjTU3qdHZzaXoMcWjw3qSXccQMnYsB7dh14q4moW8/EiqfqK4KW2ii1iW/Dlp5Bgk9q0rW6Mi53cj0r5GvhOd+0cm292+/+R0wqJaHXfZ7RzuEakU86dHt3wPgHtWFb3rKOWrX068EhKE8GvMq06lPVM6L8yJd7R3Jnu5R5ca8f59aG8V24IW2jPPc96wPG1ytpbW0jkgb2BH97gVzWmX8lwWZDyOcV97llepXwcJyev8Ak7HmypwUm2bfiG+aeW3jIldnBYBM5kHQF8dOmeMVS1r7O66feandm2itXGIYwAZm2ggE9gPm9evFQ6vq+lz39tbW9vNdOd48qKQ4Y7hyx9OO2BVLxqumSaWkct07X6kNFHHgRr0B+X02jANevbULkkeqQWl7d3ulJHEqREmEKV2sv16Zpsfi59Xj3TNIoH3h3H4965OC8nvIZbGKM+bJEUygJLnsMe/StW60TWNE0FJ5LOZVyvmMV+UEnp6+1efXwNOs+aS97uVGbj7psJqVpb43IZkY/Nzgj3FWWaCHLRSEr1U+orkoyZgWiDHaAWXHK5qVZ5z8u5seleXLCJMqx1EWqHOAc1ctdWaCQNuAHvXMWfnSOERGZj0AFdPYaOoQPc/O5/h7CvOxMKUFaRvGXKa093o3iDyhdWX2loRkBpCFB7nAPNNdobeMpBbRW8f92JQBUCQRWMzTAqisAuwDp71S12/NjZO24HzPlVf8Kn6jUVSnTV+WVmt7Lvp5bnPOpzbGRc+RZancWdtvbY23aqjJXHQnGTV7S9EttRla4/4R4yKh3SXd9IyJnH+1gEe2OKki8X2+mRTXUUMSyKNsk5HmPxgDjjuemanbxK+qEXMu94io2E8HOecdl7c193pfQzaZeFpcabmO0On2kYX5XtY+WPoSRnHfOay5LuzsbaX+07hdWmYhvnBWEEdflzlumeeKqahrgmnFvZyM/nDvgbvUA1jXWkv9vD3xd97ZlVTwg/hH4USatoRotyLUNQbX7/ybSGO1idhuKLtUAcAnHtWhYxi4VnkYFEyTLKm0MOwAH8zUdulntkMN4jRbiskgBDE9gF6n0qaeG6uGS2ghli09WBJkADv6lv8ADtXLOlCatJXLUrbF/T9Y0OA7Xu4oX7hv8a0j4l0iKVB5+9CeXUHFZM3hbRzb+Zb+YHIywPOKyb6xj0/aZUYxDGGByK4KeTYV1eeTb8nsOdaUlY1tT8RpNujsk3MWwCUJyPascabq2pzgThhgYBc8LU0Gqw26h0g+RuhY9atjxJJ5i+VGMdCY8Y/GvYnZ7amUU4lWDUtPS4MU6NeRoAvmeWIwzZ3cj247dqhvry7vbhzYqZ/OGPLhUge5b9Pyqpp2nxTKzuBcmT70QJXb2xnOa6uxjt7ayEcWlmFB1SA5yfcd/wA6mL7nTLTY5W18IXNxMsl/qQtyOFigG+RQT064H51HdWUGkTt5Fs98UbBkuclj9AOMV3FrpouGVzEqoD8uF2FfwPerCaaHcHyQXBzlhn2xmtNLEKEmcDpN9cS3EM10oNus5PK/dJHA/wD1131rc2l5HtV/3Uq9dvAqeLRYkyZMfOcgYBHT0/CrS2NsgZBANrncwzgbqylBMp02zLi1DTdOUxLFIYxnLkZz/jUBvNN1RXQRpJCfub1AZfX8K3pLWOfAeAFUOVGBwarXOjWt5E8agwMyYLIoBBz0+nFNQt1IdE5i4tdMgiaJQSQcrg5C/h3+lc9ChkvCYJACx/hFdm3hSUKdoZ042r/Fx1J/wrOvvC/kNHLa2Uu95P4TjA71cb7Mx5XF2P/Z' },
+    { name:'Banggai-Kardinalfisch', ort:'Wohnzimmer · Aquarium B', art:'Meerwasser', datum:'2024-06-20', preset:'Aquarium',
+      notiz:'Erworben: 20. Juni 2024 · Meerwasser-Zucht Maier Stuttgart · Pterapogon kauderni · Banggai-Archipel Indonesien · gefährdete Art — nur Nachzucht kaufen! · Maulbrüter: Männchen trägt Gelege 20–25 Tage · Paarweise halten · frisst Artemia und Mysis · ruhiger Schwimmer · Gekauft: Meerwasser-Zucht Maier Stuttgart · CITES Anhang II',
+      gewicht:'12g', kaufdatum:'2024-06-20',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Mandarinfisch', ort:'Wohnzimmer · Aquarium B', art:'Meerwasser', datum:'2024-07-08', preset:'Aquarium',
+      notiz:'Erworben: 8. Juli 2024 · Blue Ocean Aquaristik München · Synchiropus splendidus · Pazifik / Philippinen · frisst ausschließlich lebende Copepoden — kein Frostfutter · lebt im Korallen-Riffsystem · sehr sensibel auf Wasserqualität · schleimige Haut schützt vor Parasiten · darf nicht mit aggressiven Fischen vergesellschaftet werden · Gekauft: Blue Ocean Aquaristik München',
+      gewicht:'8g', kaufdatum:'2024-07-08',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Lampe Red Sea ReefLED 90', ort:'Wohnzimmer · Aquarium B · oben', art:'Technik', datum:'2023-11-10', preset:'Aquarium',
+      notiz:'Erworben: 10. November 2023 · Reefworld Köln · LED 90W · programmierbar per App · Sunrise/Sunset-Programm · Mondlicht-Modus aktiv · Photoperiode 11h · Lüfter alle 6 Monate reinigen',
+      gewicht:null, kaufdatum:'2023-11-10',
+      naechsterService:'2026-11-10', serienNr:'RS-2023-RL-90-441', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>💡</text></svg>' },
+    { name:'Abschäumer Bubble Magus Curve 5', ort:'Wohnzimmer · Aquarium B · Technikbecken', art:'Technik', datum:'2023-09-20', preset:'Aquarium',
+      notiz:'Erworben: 20. September 2023 · Blue Ocean München · für Becken bis 500L · Halsring wöchentlich abwischen · Pumpe vierteljährlich reinigen · Schaumproduktion: mittelbraun = optimal · zuletzt gewartet: April 2026',
+      gewicht:null, kaufdatum:'2023-09-20',
+      naechsterService:'2026-09-20', serienNr:'BM-2023-C5-882', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🫧</text></svg>' },
+    { name:'Strömungspumpe Tunze 6095', ort:'Wohnzimmer · Aquarium B · hinten rechts', art:'Technik', datum:'2023-09-20', preset:'Aquarium',
+      notiz:'Erworben: 20. September 2023 · Blue Ocean München · 14000 L/h · Multicontroller angeschlossen · Wellenmodus aktiv · Reinigung alle 3 Monate · zuletzt gereinigt: März 2026',
+      gewicht:null, kaufdatum:'2023-09-20',
+      naechsterService:'2026-09-20', serienNr:'TZ-2023-SP-6095', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🌀</text></svg>' },
+    { name:'Heizstab Eheim Jäger 300W', ort:'Wohnzimmer · Aquarium B · Technikbecken', art:'Technik', datum:'2023-09-20', preset:'Aquarium',
+      notiz:'Erworben: 20. September 2023 · Blue Ocean München · Solltemperatur: 26 °C · Meerwasserkorrosionsgeschützt · jährlich auf Kalkablagerungen prüfen · Kontrolle zuletzt: Jan 2026',
+      gewicht:null, kaufdatum:'2023-09-20',
+      naechsterService:'2027-01-01', serienNr:'EH-2023-HZ-300-771', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🌡️</text></svg>' },
+    { name:'Kalkreaktorbecken (Refugium)', ort:'Wohnzimmer · Aquarium B · Unterschrank', art:'Technik', datum:'2024-01-15', preset:'Aquarium',
+      notiz:'Erworben: 15. Januar 2024 · Meerwasser-Zucht Maier Stuttgart · Chaetomorpha-Algen drin · Mondlicht-Phase versetzt zum Hauptbecken · Ca/Mg-Puffer natürlich · Algenmasse alle 4 Wochen ausdünnen · zuletzt: April 2026',
+      gewicht:null, kaufdatum:'2024-01-15',
+      naechsterService:'2026-08-15', serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🌿</text></svg>' },
+    { name:'Vorrat Meersalz Red Sea Coral Pro', ort:'Wohnzimmer · Aquarium B · Unterschrank', art:'Vorrat', datum:'2026-04-01', preset:'Aquarium',
+      notiz:'Erworben: 1. April 2026 · Aquaristik Online · 22 kg Eimer · erhöhte Ca/Mg/KH-Werte ideal für Meerwasser-Becken · Bestand ca. 16 kg · Zielwert: 1.025 sg · Wasserwechsel 10% wöchentlich',
+      gewicht:'16000g', kaufdatum:'2026-04-01',
+      naechsterService:null, serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🧂</text></svg>' },
+    { name:'Vorrat Lebendgestein-Bruchstücke', ort:'Wohnzimmer · Aquarium B · Keller-Lager', art:'Vorrat', datum:'2024-02-01', preset:'Aquarium',
+      notiz:'Erworben: 1. Februar 2024 · Reefworld Köln · ca. 5 kg Riffkeramik · als Riffstruktur-Ergänzung bei Umbau · trocken lagern bis zur Verwendung',
+      gewicht:'5000g', kaufdatum:'2024-02-01',
+      naechsterService:null, serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🪨</text></svg>' },
+    // ── Aquarium C · Keller · Zuchtbecken Buntbarsche ────────────────────
+    { name:'Maulbrüter mit Jungtier', ort:'Keller · Aquarium C', art:'Buntbarsch', datum:'2025-02-14', preset:'Aquarium',
+      notiz:'Erworben: 1. September 2024 · Cichliden-Zucht Berger Wien · Haplochromis sp. · Malawisee Ostafrika · Brutpflege seit 2025-02-14 · Jungtiere noch im Maul — Becken nicht reinigen · fressen während Brutphase kaum · Weibchen nach ca. 21 Tagen Jungtiere freilassen · Jungtiere in Aufzuchtbecken umsetzen · Gekauft: Cichliden-Zucht Berger Wien',
+      gewicht:'145g', kaufdatum:'2024-09-01',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCAA1AFADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDymTTZPMPIwTTjpjheSKX7exYg+tWEui9YSdRFWRntYuDSpYux61prg9RmpbaA3Nysa8A9al1WkFrspW+kySN8vOKG0dy5xzXcxWUNrbbIyGcjBNUFtEiZstyeorgjjXJux1KgktTlDo0gTec49hTRpMhYKPx4rq95TaQwMf0q1bW6XoWVY9pDYzjrWn1qp2B0YpXuc5Z+F5rm4EUJ3MPvEg4Fb9p4EXYTNNGAAcsZBt47DAPNdxo2kRZT98I8RmSVsdvf24JrgNb8bagupfaNJlFtZhj5MRAJkX+8w9/SuqEKs4qU3Y82VaUpONJbHEP/AKw1YhJFSDTPPf8AcXMDexYg1bh0K8xwYz9HrWVSHVnSosSI+laFlbSl/MAwPWlg0O8z91GA64at2GIpaBBC3+8BkfnXn16yS93U3pU7u7GRT/ZyrSDgdamkKXh3xjbkcGg26+WFcjBGSas2+j3LoGtXgmReTGh5+lcUYKXvXszplU5dLXMuJ44YpIrnbtU5Zu4/+ua0NOuLi8eOG2tGihwBk/TnI6f1rct7W3jQhraFXK4IaPHP4VN9s+xW5/d70cctCMj/ABraNSCujmqRnLWxNo15NHMobJeMGIqB1GfT68/jXO6r4J0Se6lvEgubZAxZ4onCoR/s5HH0rVuQWlE+2aCUAETRqR9M/wD18VSuNX1K7gMM6xTg5DPnace+PevQoY+MYck43t8jhqZfVlP2lKVr7nkpQ7s4rY0eK9nlCRyMFzmqr2pim2N1NdboMEcEQPGT3oxNXkp3Wp20Yc0i9a291aRB/OIA68Dn2z1ojuGFw0kOU3kF1A7juOak1C78qMR5wDWRNqKiTap2j2ryacalRXZ3NRSuaF1c/b7iV1hKh2wVVcAevrWpY6XZ6bIk8l68U3dQev1xXP2N9LDL5jQtJEDuLL1Xt+VbbaxDcMrBcY43Bc5+ta1OaEbRQ8LRVWraTsjojfadNDtmuVduxK4OaxBck3jm3Z1RehXj64pyzLKpMe1x3wefypUjjMwZomCnpnkCuGUm9z3aGFpU72NmGSO4tpDNEvmNHtEgznJI5OTiqMAsbZ/3u6Uq3yhW2jj165B6fSqLXEe8xh2wpxkdPwqMmIsCRI3PUcUouSaY1gFZ32Zn6roiSoj+bt2rnhBkj0zWWZXiiQqaKK78NJzhaR8zHRuxT1K8llxuPQVQgYyE7ucUUV6cIpQ0M5NuRu6PrMtjZz2qxI4n43N/DxioZ2MUilCVJPUUUVjJLnKjorlyS8ZLeNiu5ycFs4NXI9TvreIGO5baQflIBFFFc7hHTQ9nBVZylyt3RBFPLLks547VMpycMWP40UVnNJPQ9jnlZ6n/2Q==' },
+    { name:'Pfauenbuntbarsch', ort:'Keller · Aquarium C', art:'Buntbarsch', datum:'2024-09-01', preset:'Aquarium',
+      notiz:'Erworben: 1. September 2024 · Cichliden-Zucht Berger Wien · Aulonocara sp. "Orange Blossom" · Malawisee Ostafrika · Männchen dominant und territorial · Prachtfärbung Orange-Türkis bei Stimmung und Balz · Weibchen unscheinbar bräunlich · braucht Sandboden und Höhlen · ph 7,8–8,5 · Hartes Wasser 15–20 °dH · Gekauft: Cichliden-Zucht Berger Wien',
+      gewicht:'180g', kaufdatum:'2024-09-01',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Labidochromis Yellow', ort:'Keller · Aquarium C', art:'Buntbarsch', datum:'2024-09-01', preset:'Aquarium',
+      notiz:'Erworben: 1. September 2024 · Cichliden-Zucht Berger Wien · Labidochromis caeruleus · Malawisee Ostafrika · friedlichste Malawi-Art · leuchtend gelb mit schwarzer Dorsalflosse · Allesfresser · verträgt sich auch mit anderen Arten · ph 7,8–8,5 · Zuchtform sehr robust · Malawibloat-gefährdet bei schlechter Wasserqualität · Gekauft: Cichliden-Zucht Berger Wien',
+      gewicht:'90g', kaufdatum:'2024-09-01',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Pseudotropheus', ort:'Keller · Aquarium C', art:'Buntbarsch', datum:'2024-09-01', preset:'Aquarium',
+      notiz:'Erworben: 1. September 2024 · Cichliden-Zucht Berger Wien · Pseudotropheus sp. "Blau-Weiß" · Malawisee Ostafrika · sehr territorial — braucht klare Reviere und viele Steine · Männchen vertreibt andere Männchen aggressiv · Maulbrüter (Weibchen) · frisst Algen und Aufwuchs · Verhältnis 1 Männchen zu 3 Weibchen empfohlen · Gekauft: Cichliden-Zucht Berger Wien',
+      gewicht:'120g', kaufdatum:'2024-09-01',
+      naechsterService:null, serienNr:null, kiProfil:true,
+      foto:'data:image/jpeg;base64,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' },
+    { name:'Lampe Sera LED X-Change 100cm', ort:'Keller · Aquarium C · oben', art:'Technik', datum:'2022-08-01', preset:'Aquarium',
+      notiz:'Erworben: 1. August 2022 · Zooplus · 36W LED Vollspektrum · 10h Photoperiode · Verdunkelungsrampe morgens/abends · Tauschbar ohne Werkzeug · Licht zuletzt getauscht: Aug 2025',
+      gewicht:null, kaufdatum:'2022-08-01',
+      naechsterService:'2026-08-01', serienNr:'SE-2022-LED-334', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>💡</text></svg>' },
+    { name:'Innenfilter Eheim 2217 (Zuchtbecken)', ort:'Keller · Aquarium C · hinten', art:'Technik', datum:'2022-08-01', preset:'Aquarium',
+      notiz:'Erworben: 1. August 2022 · Aquarium Kessler Hamburg · Filtermasse: Filterwatte + Biobälle · Reinigung alle 4 Wochen mit Beckenwasser · Filtermasse zuletzt: März 2026 · wichtig: Sauglöcher mit Gaze abdecken wegen Jungtieren',
+      gewicht:null, kaufdatum:'2022-08-01',
+      naechsterService:'2026-08-01', serienNr:'EH-2022-FI-2217-C', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>⚙️</text></svg>' },
+    { name:'Heizstab Eheim Jäger 150W', ort:'Keller · Aquarium C · hinten links', art:'Technik', datum:'2022-08-01', preset:'Aquarium',
+      notiz:'Erworben: 1. August 2022 · Aquarium Kessler Hamburg · Solltemperatur: 26 °C · Malawi-typisch hartes alkalisches Wasser · Kalkbelag jährlich prüfen · Kontrolle zuletzt: Jan 2026',
+      gewicht:null, kaufdatum:'2022-08-01',
+      naechsterService:'2027-01-01', serienNr:'EH-2022-HZ-150-C', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🌡️</text></svg>' },
+    { name:'Luftpumpe Sera Air 550R', ort:'Keller · Aquarium C · Regal daneben', art:'Technik', datum:'2022-08-01', preset:'Aquarium',
+      notiz:'Erworben: 1. August 2022 · Zooplus · Membran alle 12 Monate tauschen · erzeugt Oberflächenbewegung für O2-Eintrag · besonders wichtig bei Brutpflegephasen · zuletzt gewartet: Aug 2025',
+      gewicht:null, kaufdatum:'2022-08-01',
+      naechsterService:'2026-08-01', serienNr:'SE-2022-AP-550', kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>💨</text></svg>' },
+    { name:'Vorrat Malawi-Kies 3–5mm', ort:'Keller · Aquarium C · Regal', art:'Vorrat', datum:'2022-08-01', preset:'Aquarium',
+      notiz:'Erworben: 1. August 2022 · Zooplus · heller Naturkies 3–5mm · Bestand ca. 12 kg · Malawi-Buntbarsche buddeln gerne — Bodenschicht mind. 8 cm · bei Umbau vorab waschen',
+      gewicht:'12000g', kaufdatum:'2022-08-01',
+      naechsterService:null, serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🪨</text></svg>' },
+    { name:'Vorrat pH-Puffer Malawi/Tanganjika', ort:'Keller · Aquarium C · Regal', art:'Vorrat', datum:'2026-02-01', preset:'Aquarium',
+      notiz:'Erworben: 1. Februar 2026 · Aquaristik Online · JBL Malawi/Tanganjika 250g · hebt pH auf 8,0–8,5 · Bestand ca. 180g · Dosierung: 5g/100L bei Wasserwechsel · Ziel-pH: 8,2',
+      gewicht:'180g', kaufdatum:'2026-02-01',
+      naechsterService:null, serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🧪</text></svg>' },
+    { name:'Vorrat Aufzuchtfutter Tetra Baby', ort:'Keller · Aquarium C · Regal', art:'Vorrat', datum:'2026-01-15', preset:'Aquarium',
+      notiz:'Erworben: 15. Januar 2026 · Zooplus · Tetra BabyMin Granulat 66ml · für Jungfische ab 1. Woche · Bestand ca. 40ml · nach Öffnung 6 Monate haltbar · kühl und trocken lagern',
+      gewicht:'40g', kaufdatum:'2026-01-15',
+      naechsterService:null, serienNr:null, kiProfil:false,
+      foto:'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'><rect width=\'40\' height=\'40\' fill=\'%231B3A57\'/><text x=\'20\' y=\'26\' font-size=\'18\' text-anchor=\'middle\'>🐟</text></svg>' },
+  ];
+
+  var markerSpeicher = ladeAusStorage();
+  var pendingMarker = null;
+  var aktivesPreset = 'Aquarium';
+
+  // ── Tab-Navigation
+  function switchTab(name){
+    ['home','themen','liste','archiv'].forEach(function(t){
+      document.getElementById('s-'+t).classList.toggle('active', t===name);
+      document.getElementById('tab-'+t).classList.toggle('active', t===name);
+    });
+  }
+
+  // ── Kamera starten
+  var stream = null;
+  var video  = document.getElementById('kameraVideo');
+  var canvas = document.getElementById('kameraCanvas');
+  var dot    = document.getElementById('markerDot');
+  var wrap   = document.getElementById('kameraWrap');
+
+  document.querySelector('.scanner-btn').addEventListener('click', function(){
+    if(aktModus === 'lens'){
+      window.open('https://lens.google.com', '_blank');
+      return;
+    }
+    document.getElementById('s-home').classList.remove('active');
+    document.getElementById('s-kamera').classList.add('active');
+    canvas.style.display = 'none';
+    dot.style.display    = 'none';
+    video.style.display  = 'block';
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+      .then(function(s){
+        stream = s;
+        video.srcObject = s;
+      })
+      .catch(function(){
+        document.getElementById('kameraHint').textContent = 'Kamera nicht verfügbar';
+      });
+  });
+
+  // ── Tap → Foto einfrieren + Marker setzen
+  wrap.addEventListener('click', function(e){
+    if(canvas.style.display === 'block') return; // bereits eingefroren
+    if(!stream) return;
+    var rect = wrap.getBoundingClientRect();
+    var xPx  = e.clientX - rect.left;
+    var yPx  = e.clientY - rect.top;
+    var xRel = xPx / rect.width;
+    var yRel = yPx / rect.height;
+
+    // Foto einfrieren
+    canvas.width  = wrap.offsetWidth;
+    canvas.height = wrap.offsetHeight;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    video.style.display  = 'none';
+    canvas.style.display = 'block';
+    if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream = null; }
+
+    // Marker-Punkt positionieren
+    dot.style.left    = (xRel * 100) + '%';
+    dot.style.top     = (yRel * 100) + '%';
+    dot.style.display = 'block';
+    document.getElementById('kameraHint').style.display = 'none';
+
+    // Pending-Marker merken
+    pendingMarker = { x: xRel, y: yRel, foto: canvas.toDataURL('image/jpeg', 0.7) };
+
+    // Benennungs-Modal öffnen
+    document.getElementById('benennInput').value = '';
+    document.getElementById('benennModal').classList.add('open');
+    setTimeout(function(){ document.getElementById('benennInput').focus(); }, 100);
+  });
+
+  // ── Modal: Speichern
+  document.getElementById('benennOk').addEventListener('click', function(){
+    var name = document.getElementById('benennInput').value.trim();
+    if(!name) return;
+    pendingMarker.name  = name;
+    pendingMarker.datum = new Date().toISOString().slice(0,10);
+    pendingMarker.preset = aktivesPreset;
+    markerSpeicher.push(pendingMarker);
+    speichereInStorage();
+    pendingMarker = null;
+    document.getElementById('benennModal').classList.remove('open');
+    document.getElementById('kameraHint').textContent = '✓ ' + name + ' gespeichert';
+    document.getElementById('kameraHint').style.display = 'block';
+    setTimeout(function(){
+      // Zurück zum Homescreen
+      document.getElementById('s-kamera').classList.remove('active');
+      document.getElementById('s-home').classList.add('active');
+    }, 1200);
+  });
+
+  // ── Modal: Abbruch
+  document.getElementById('benennAbbruch').addEventListener('click', function(){
+    document.getElementById('benennModal').classList.remove('open');
+    dot.style.display = 'none';
+    canvas.style.display = 'none';
+    video.style.display  = 'block';
+    document.getElementById('kameraHint').textContent = 'Antippen zum Markieren';
+    document.getElementById('kameraHint').style.display = 'block';
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+      .then(function(s){ stream = s; video.srcObject = s; }).catch(function(){});
+  });
+
+  // ── Panel öffnen / schließen
+  // ── Links: Modul / Konfiguration / Forum
+  function openOverlay(id){ document.getElementById(id).style.display='flex'; }
+  function closeOverlay(id){ document.getElementById(id).style.display='none'; }
+
+  document.getElementById('leftModul').addEventListener('click', function(){ openOverlay('modulOverlay'); });
+  document.getElementById('modulClose').addEventListener('click', function(){ closeOverlay('modulOverlay'); });
+
+  document.getElementById('leftKonfig').addEventListener('click', function(){ openOverlay('einstellOverlay'); });
+
+  document.getElementById('leftForum').addEventListener('click', function(){ openOverlay('forumOverlay'); });
+
+  // ── SCANNER-MODUS (M3) ──────────────────────────────────────────
+  var aktModus = 'ai';
+  function setMode(modus){
+    aktModus = modus;
+    var btn  = document.getElementById('scannerBtn');
+    var kBtn = document.getElementById('modeKamera');
+    var lBtn = document.getElementById('modeLens');
+    var aBtn = document.getElementById('modeAI');
+    // Alle zurücksetzen
+    [kBtn,lBtn,aBtn].forEach(function(b){
+      b.style.background='rgba(255,255,255,0.07)';
+      b.style.color='rgba(255,255,255,0.45)';
+      b.style.borderColor='rgba(255,255,255,0.18)';
+      b.style.fontWeight='400';
+    });
+    btn.classList.remove('modus-lens','modus-ai');
+    if(modus === 'kamera'){
+      btn.textContent = 'FOTO';
+      kBtn.style.background='rgba(255,255,255,0.88)'; kBtn.style.color='var(--blue)'; kBtn.style.borderColor='rgba(255,255,255,0.6)'; kBtn.style.fontWeight='700';
+    } else if(modus === 'lens'){
+      btn.textContent = 'LENS';
+      btn.classList.add('modus-lens');
+      lBtn.style.background='rgba(255,255,255,0.88)'; lBtn.style.color='var(--blue)'; lBtn.style.borderColor='rgba(255,255,255,0.6)'; lBtn.style.fontWeight='700';
+    } else {
+      btn.textContent = 'KI';
+      btn.classList.add('modus-ai');
+      aBtn.style.background='rgba(255,255,255,0.88)'; aBtn.style.color='var(--blue)'; aBtn.style.borderColor='rgba(224,64,64,0.6)'; aBtn.style.fontWeight='700';
+    }
+  }
+  document.getElementById('forumClose').addEventListener('click', function(){ closeOverlay('forumOverlay'); });
+
+  // ── Safe-Mock
+  document.getElementById('safeBtn').addEventListener('click', function(){
+    var el = document.getElementById('safeOverlay');
+    if(el) { el.style.display='flex'; return; }
+    var ov = document.createElement('div');
+    ov.id = 'safeOverlay';
+    ov.style.cssText='position:absolute;inset:0;z-index:60;background:rgba(10,20,34,0.98);border-radius:37px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:28px;';
+    ov.innerHTML='<span style="font-size:40px;">🔐</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:rgba(255,255,255,0.85);letter-spacing:.14em;font-weight:600;">SAFE</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.38);letter-spacing:.1em;text-align:center;line-height:1.6;">Geschützter Bereich.<br>PIN oder Biometrie erforderlich.</span>'
+      +'<div id="safeClose" style="margin-top:12px;font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:.1em;cursor:pointer;padding:8px 18px;border:1px solid rgba(255,255,255,0.15);border-radius:12px;">Schließen</div>';
+    document.querySelector('.phone').appendChild(ov);
+    document.getElementById('safeClose').addEventListener('click', function(){ ov.style.display='none'; });
+  });
+
+  // ── Cloud-Mock
+  document.getElementById('cloudBtn').addEventListener('click', function(){
+    var el = document.getElementById('cloudOverlay');
+    if(el) { el.style.display='flex'; return; }
+    var ov = document.createElement('div');
+    ov.id = 'cloudOverlay';
+    ov.style.cssText='position:absolute;inset:0;z-index:60;background:rgba(10,20,34,0.98);border-radius:37px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px;';
+    ov.innerHTML='<span style="font-size:40px;">☁️</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:rgba(255,255,255,0.85);letter-spacing:.14em;font-weight:600;">CLOUD-SYNC</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.38);letter-spacing:.1em;text-align:center;line-height:1.6;">Letzter Sync: heute 14:32<br>25 Boxen · 312 Einträge · ✓ aktuell</span>'
+      +'<div id="cloudClose" style="margin-top:12px;font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:.1em;cursor:pointer;padding:8px 18px;border:1px solid rgba(255,255,255,0.15);border-radius:12px;">Schließen</div>';
+    document.querySelector('.phone').appendChild(ov);
+    document.getElementById('cloudClose').addEventListener('click', function(){ ov.style.display='none'; });
+  });
+
+  // ── Ghostbar: nach 10s ausblenden, bei Berührung wieder einblenden
+  var ghostbar = document.querySelector('.right-sidebar');
+  var ghostTimer = setTimeout(function(){ ghostbar.classList.add('hidden'); }, 10000);
+  document.querySelector('.phone').addEventListener('touchstart', revealGhost);
+  document.querySelector('.phone').addEventListener('mousedown', revealGhost);
+  function revealGhost(){
+    ghostbar.classList.remove('hidden');
+    clearTimeout(ghostTimer);
+    ghostTimer = setTimeout(function(){ ghostbar.classList.add('hidden'); }, 10000);
+  }
+
+  // ── Themen-Karte wählen
+  document.querySelectorAll('.themen-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      document.querySelectorAll('.themen-card').forEach(function(c){ c.classList.remove('active-preset'); });
+      card.classList.add('active-preset');
+      var name = card.querySelector('.tc-name').textContent;
+      document.querySelector('.preset-name').textContent = name;
+      aktivesPreset = name;
+      switchTab('home');
+    });
+  });
+
+  // ── Liste rendern
+  function renderListe(){
+    var scroll = document.getElementById('listeScroll');
+    var leer   = document.getElementById('listeLeer');
+    var header = document.getElementById('listeHeader');
+    header.textContent = 'MARKER · ' + markerSpeicher.length + ' Eintrag' + (markerSpeicher.length !== 1 ? 'einträge' : '');
+    // Alte Einträge entfernen (nicht #listeLeer)
+    Array.from(scroll.children).forEach(function(el){
+      if(el.id !== 'listeLeer') el.parentNode.removeChild(el);
+    });
+    if(markerSpeicher.length === 0){ leer.style.display = 'flex'; return; }
+    leer.style.display = 'none';
+    markerSpeicher.forEach(function(m, idx){
+      var item = document.createElement('div');
+      item.className = 'liste-item';
+      var img = document.createElement('img');
+      img.className = 'liste-thumb';
+      img.src = m.foto;
+      var info = document.createElement('div');
+      info.className = 'liste-info';
+      var nm = document.createElement('div');
+      nm.className = 'liste-name';
+      nm.textContent = m.name;
+      var dt = document.createElement('div');
+      dt.className = 'liste-datum';
+      dt.textContent = m.datum + ' · ' + m.preset;
+      info.appendChild(nm);
+      info.appendChild(dt);
+      item.appendChild(img);
+      item.appendChild(info);
+      scroll.appendChild(item);
+
+      // Antippen → Detail
+      item.addEventListener('click', function(){
+        if(item.classList.contains('delete-mode')){ return; }
+        openDetail(m);
+      });
+
+      // Lang halten → Löschen-Button
+      var holdTimer = null;
+      function startHold(){ holdTimer = setTimeout(function(){ showDelete(item, idx); }, 600); }
+      function cancelHold(){ clearTimeout(holdTimer); }
+      item.addEventListener('touchstart', startHold, {passive:true});
+      item.addEventListener('touchend', cancelHold);
+      item.addEventListener('touchmove', cancelHold);
+      item.addEventListener('mousedown', startHold);
+      item.addEventListener('mouseup', cancelHold);
+      item.addEventListener('mouseleave', cancelHold);
+    });
+  }
+
+  function showDelete(item, idx){
+    // Alle anderen delete-modes zurücksetzen
+    document.querySelectorAll('.liste-item').forEach(function(el){ 
+      el.classList.remove('delete-mode');
+      var b = el.querySelector('.liste-del-btn');
+      if(b) b.parentNode.removeChild(b);
+    });
+    item.classList.add('delete-mode');
+    var btn = document.createElement('div');
+    btn.className = 'liste-del-btn';
+    btn.textContent = 'Löschen';
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      markerSpeicher.splice(idx, 1);
+      speichereInStorage();
+      renderListe();
+    });
+    item.appendChild(btn);
+  }
+
+  // ── Detail-Overlay öffnen
+  function openDetail(m){
+    document.getElementById('detailName').textContent = m.name;
+    document.getElementById('detailDatum').textContent = m.datum + ' · ' + m.preset;
+    var img = document.getElementById('detailImg');
+    img.src = m.foto;
+    var dot = document.getElementById('detailDot');
+    // Dot-Position nach Bild-Laden setzen
+    img.onload = function(){
+      dot.style.left = (m.x * 100) + '%';
+      dot.style.top  = (m.y * 100) + '%';
+    };
+    if(img.complete){ dot.style.left = (m.x*100)+'%'; dot.style.top = (m.y*100)+'%'; }
+    document.getElementById('detailOverlay').classList.add('open');
+  }
+
+  document.getElementById('detailClose').addEventListener('click', function(){
+    document.getElementById('detailOverlay').classList.remove('open');
+  });
+
+  // ── Mock-Detail Overlay (für Mock-Daten mit Ampel + Seriennummer)
+  function openMockDetail(m){
+    var ex = document.getElementById('mockDetailOverlay');
+    if(ex) ex.parentNode.removeChild(ex);
+    var ampel = m.naechsterService ? ampelStatus(m.naechsterService) : null;
+    var ampelHtml = '';
+    if(ampel){
+      ampelHtml = '<div style="margin-top:12px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.07);border:1px solid ' + ampel.farbe + '44;">'
+        + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.38);letter-spacing:.12em;margin-bottom:6px;">WARTUNG</div>'
+        + '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">'
+        + '<span style="font-size:11px;color:rgba(255,255,255,0.6);">Letzter Service</span>'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.85);">' + (m.letzterService||'—') + '</span></div>'
+        + '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">'
+        + '<span style="font-size:11px;color:rgba(255,255,255,0.6);">Nächster Service</span>'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.85);">' + m.naechsterService + '</span></div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);">'
+        + '<span style="font-size:11px;color:rgba(255,255,255,0.6);">Status</span>'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:11px;font-weight:700;color:' + ampel.farbe + ';">' + ampel.symbol + ' ' + ampel.text + '</span></div>'
+        + '</div>';
+    }
+    var serienHtml = m.serienNr
+      ? '<div style="margin-top:8px;display:flex;justify-content:space-between;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.07);">'
+        + '<span style="font-size:11px;color:rgba(255,255,255,0.5);">Seriennummer</span>'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.78);">' + m.serienNr + '</span></div>'
+      : '';
+    var barcodeHtml = m.barcode
+      ? '<div style="margin-top:8px;display:flex;justify-content:space-between;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.07);">'
+        + '<span style="font-size:11px;color:rgba(255,255,255,0.5);">Barcode</span>'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.78);">▌▌▌ ' + m.barcode + '</span></div>'
+      : '';
+    // Profil-Block — universell für alle Einträge
+    // Profil-Block — universell
+    var hasFoto = m.foto && m.foto.length > 10;
+    var fotoHeaderHtml = hasFoto ? '<div style="width:100%;height:160px;overflow:hidden;flex-shrink:0;"><img src="' + m.foto + '" style="width:100%;height:100%;object-fit:cover;" alt="' + m.name + '"/></div>' : '';
+    var profilHtml = '<div style="margin-top:12px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(74,224,64,0.18);">';
+    profilHtml += '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.38);letter-spacing:.12em;margin-bottom:8px;">PROFIL</div>';
+    profilHtml += '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;color:rgba(255,255,255,0.6);">Art</span><span style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.85);">' + (m.art||'—') + '</span></div>';
+    profilHtml += '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;color:rgba(255,255,255,0.6);">Kaufdatum</span><span style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.85);">' + (m.kaufdatum||'—') + '</span></div>';
+    if(m.gewicht) profilHtml += '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;color:rgba(255,255,255,0.6);">Gewicht</span><span style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.85);">' + m.gewicht + '</span></div>';
+    if(m.notiz) profilHtml += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;color:rgba(255,255,255,0.5);line-height:1.6;">' + m.notiz + '</div>';
+    profilHtml += '</div>';
+    if(m.kiProfil) profilHtml += '<div style="margin-top:8px;padding:8px 14px;border-radius:10px;background:rgba(224,64,64,0.12);border:1px solid rgba(224,64,64,0.3);display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">🧠</span><div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.12em;">KI-ERKENNUNGSPROFIL</div><div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;">Individuum gespeichert · wird dauerhaft abgeglichen</div></div></div>';
+    var discusHtml = profilHtml;
+    var ov = document.createElement('div');
+    ov.id = 'mockDetailOverlay';
+    ov.style.cssText='position:absolute;inset:0;z-index:45;background:#0E2236;border-radius:37px;display:flex;flex-direction:column;';
+    var ortBlock = m.ort
+      ? '<div style="margin:0 14px 8px;padding:12px 14px;border-radius:12px;background:#1B3A57;display:flex;align-items:center;gap:10px;flex-shrink:0;">'
+        + '<span style="font-size:18px;">📍</span>'
+        + '<div>'
+        + '<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:rgba(255,255,255,0.4);letter-spacing:.12em;margin-bottom:2px;">ABLAGEORT</div>'
+        + '<div style="font-size:13px;font-weight:700;color:#F5C840;line-height:1.3;">' + m.ort + '</div>'
+        + '</div>'
+        + '</div>'
+      : '';
+    ov.innerHTML=fotoHeaderHtml
+      + '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px 6px;flex-shrink:0;">'
+      + '<div style="font-size:14px;font-weight:700;color:#FFF;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + m.name + '</div>'
+      + '<div id="mockDetailClose" style="font-size:14px;color:rgba(255,255,255,0.5);cursor:pointer;padding:4px 8px;">✕</div>'
+      + '</div>'
+      + '<div style="padding:0 14px 6px;flex-shrink:0;">'
+      + '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.12em;">' + (m.art||'') + ' · ' + m.datum + '</span>'
+      + '</div>'
+      + ortBlock
+      + '<div style="flex:1 1 0;overflow-y:auto;padding:6px 14px 14px;">'
+      + discusHtml + ampelHtml + serienHtml + barcodeHtml
+      + '<div style="margin-top:8px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.07);opacity:0.45;text-align:center;">'
+      + '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:#fff;letter-spacing:.1em;">PDF · Dok · Journal · bald</span>'
+      + '</div>'
+      + '</div>';
+    document.querySelector('.phone').appendChild(ov);
+    document.getElementById('mockDetailClose').addEventListener('click', function(){ ov.parentNode.removeChild(ov); });
+  }
+
+  // Liste neu rendern wenn Liste-Tab geöffnet wird
+  var origSwitch = window.switchTab;
+  window.switchTab = function(name){
+    origSwitch(name);
+    if(name === 'liste') renderListe();
+  };
+
+  // ── SCHEIBCHEN 4 — Suche ─────────────────────────────────────
+
+  function oeffneSuche(){
+    document.getElementById('suchInput').value = '';
+    zeigeErgebnis([]);
+    document.getElementById('suchLeer').style.display = 'flex';
+    document.getElementById('suchOverlay').classList.add('open');
+    setTimeout(function(){ document.getElementById('suchInput').focus(); }, 120);
+  }
+  function schliesseSuche(){
+    document.getElementById('suchOverlay').classList.remove('open');
+    stopSprache();
+  }
+
+  document.getElementById('suchOeffnen').addEventListener('click', oeffneSuche);
+  document.getElementById('suchClose').addEventListener('click', schliesseSuche);
+
+  // Texteingabe
+  document.getElementById('suchInput').addEventListener('input', function(){
+    fuehreSucheAus(this.value.trim());
+  });
+
+  function fuehreSucheAus(q){
+    if(!q){ zeigeErgebnis([]); document.getElementById('suchLeer').style.display='flex'; return; }
+    // Mock-Daten + echte Marker zusammenführen
+    var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
+    var ql = q.toLowerCase();
+    var treffer = pool.filter(function(m){
+      return m.name.toLowerCase().indexOf(ql) !== -1
+        || (m.art||'').toLowerCase().indexOf(ql) !== -1
+        || (m.ort||'').toLowerCase().indexOf(ql) !== -1
+        || (m.notiz||'').toLowerCase().indexOf(ql) !== -1
+        || (m.preset||'').toLowerCase().indexOf(ql) !== -1;
+    });
+    treffer.sort(function(a,b){ return b.datum.localeCompare(a.datum); });
+    zeigeErgebnis(treffer);
+  }
+
+  function zeigeErgebnis(treffer){
+    var box = document.getElementById('suchErgebnis');
+    var leer = document.getElementById('suchLeer');
+    Array.from(box.children).forEach(function(el){ if(el.id !== 'suchLeer') el.parentNode.removeChild(el); });
+    if(treffer.length === 0){ leer.style.display='flex'; return; }
+    leer.style.display = 'none';
+    if(treffer.length === 1){
+      schliesseSuche();
+      openMockDetail(treffer[0]);
+      return;
+    }
+    treffer.forEach(function(m){
+      var item = document.createElement('div');
+      item.className = 'such-item';
+      var img = document.createElement('img');
+      img.className = 'such-thumb';
+      img.src = m.foto;
+      var info = document.createElement('div');
+      info.className = 'such-info';
+      var nm = document.createElement('div');
+      nm.className = 'such-name';
+      nm.textContent = m.name;
+      var mt = document.createElement('div');
+      mt.className = 'such-meta';
+      mt.textContent = (m.art||'—') + ' · ' + (m.ort||m.preset||'—');
+      info.appendChild(nm);
+      info.appendChild(mt);
+      item.appendChild(img);
+      item.appendChild(info);
+      item.addEventListener('click', function(){
+        schliesseSuche();
+        openMockDetail(m);
+      });
+      box.appendChild(item);
+    });
+  }
+
+  // ── Sprachsuche (Web Speech API — braucht HTTPS)
+  var recognition = null;
+  function stopSprache(){
+    if(recognition){ try{ recognition.stop(); }catch(e){} recognition = null; }
+    var mic = document.getElementById('suchMic');
+    mic.classList.remove('hoeren');
+    document.getElementById('suchMicLabel').textContent = 'Sprechen';
+  }
+
+  document.getElementById('suchMic').addEventListener('click', function(){
+    var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRec){
+      document.getElementById('suchMicLabel').textContent = 'HTTPS nötig';
+      return;
+    }
+    if(recognition){ stopSprache(); return; }
+    recognition = new SpeechRec();
+    recognition.lang = 'de-DE';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    var mic = document.getElementById('suchMic');
+    mic.classList.add('hoeren');
+    document.getElementById('suchMicLabel').textContent = 'Höre …';
+    recognition.onresult = function(e){
+      var text = e.results[0][0].transcript;
+      document.getElementById('suchInput').value = text;
+      fuehreSucheAus(text);
+      stopSprache();
+    };
+    recognition.onerror = function(){
+      document.getElementById('suchMicLabel').textContent = 'Fehler';
+      stopSprache();
+    };
+    recognition.onend = function(){ stopSprache(); };
+    recognition.start();
+  });
+
+  // ── SCHEIBCHEN 5 — Einstellungen ────────────────────────────────
+  document.getElementById('zahnradBtn').addEventListener('click', function(){
+    document.getElementById('einstellOverlay').classList.add('open');
+  });
+  document.getElementById('einstellClose').addEventListener('click', function(){
+    document.getElementById('einstellOverlay').classList.remove('open');
+  });
+
+  // ── Ampel-Konfiguration — Tippen öffnet Eingabe
+  document.getElementById('ampelGelbRow').addEventListener('click', function(){
+    var val = prompt('Gelb ab wie vielen Tagen vor Service-Termin?', ampelConfig.gelbTage);
+    if(val && !isNaN(parseInt(val))){
+      ampelConfig.gelbTage = parseInt(val);
+      document.getElementById('ampelGelbBadge').textContent = ampelConfig.gelbTage + ' Tage';
+    }
+  });
+  document.getElementById('ampelRotRow').addEventListener('click', function(){
+    var val = prompt('Rot ab wie vielen Tagen vor Service-Termin?', ampelConfig.rotTage);
+    if(val && !isNaN(parseInt(val))){
+      ampelConfig.rotTage = parseInt(val);
+      document.getElementById('ampelRotBadge').textContent = ampelConfig.rotTage + ' Tage';
+    }
+  });
+
+  // ── SCHEIBCHEN 6 — Archiv ────────────────────────────────────────
+  var archivSort = 'datum'; // 'datum' | 'ort' | 'art'
+
+  function renderArchiv(filter){
+    var scroll = document.getElementById('archivScroll');
+    var leer   = document.getElementById('archivLeer');
+    Array.from(scroll.children).forEach(function(el){
+      if(el.id !== 'archivLeer') el.parentNode.removeChild(el);
+    });
+    // Mock-Daten + Aquarium + echte Marker zusammenführen
+    var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
+    // Nur aktives Preset
+    pool = pool.filter(function(m){ return m.preset === aktivesPreset; });
+    if(filter){
+      var fl = filter.toLowerCase();
+      pool = pool.filter(function(m){
+        return m.name.toLowerCase().indexOf(fl) !== -1
+          || (m.art||'').toLowerCase().indexOf(fl) !== -1
+          || (m.notiz||'').toLowerCase().indexOf(fl) !== -1;
+      });
+    }
+    if(archivSort === 'datum'){
+      pool.sort(function(a,b){ return b.datum.localeCompare(a.datum); });
+    } else if(archivSort === 'ort'){
+      pool.sort(function(a,b){ return (a.ort||a.preset||'').localeCompare(b.ort||b.preset||''); });
+    } else {
+      // Art-Sortierung
+      var artReihe = ['Kleidung','Technik','Werkzeug','Flasche'];
+      pool.sort(function(a,b){
+        return artReihe.indexOf(a.art||'') - artReihe.indexOf(b.art||'');
+      });
+    }
+    if(pool.length === 0){ leer.style.display = 'flex'; return; }
+    leer.style.display = 'none';
+    pool.forEach(function(m){
+      var item = document.createElement('div');
+      item.className = 'archiv-item';
+      var img = document.createElement('img');
+      img.className = 'archiv-thumb';
+      img.src = m.foto;
+      var info = document.createElement('div');
+      info.className = 'archiv-info';
+      var nm = document.createElement('div');
+      nm.className = 'archiv-name';
+      nm.textContent = m.name;
+      var mt = document.createElement('div');
+      mt.className = 'archiv-meta';
+      var ampel = m.naechsterService ? ampelStatus(m.naechsterService) : null;
+      var ampelText = ampel ? (' · ' + ampel.symbol + ' ' + ampel.text) : '';
+      mt.textContent = (m.art || '—') + ' · ' + (m.ort || m.preset || '—') + ampelText;
+      if(ampel) mt.style.color = ampel.farbe;
+      info.appendChild(nm); info.appendChild(mt);
+      item.appendChild(img); item.appendChild(info);
+      item.addEventListener('click', function(){ openMockDetail(m); });
+      scroll.appendChild(item);
+    });
+  }
+
+  // Suche live
+  document.getElementById('archivInput').addEventListener('input', function(){
+    renderArchiv(this.value.trim());
+  });
+
+  // Sortier-Buttons
+  ['sortDatum','sortOrt','sortArt'].forEach(function(id){
+    document.getElementById(id).addEventListener('click', function(){
+      document.querySelectorAll('.sort-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      archivSort = id === 'sortDatum' ? 'datum' : id === 'sortOrt' ? 'ort' : 'art';
+      renderArchiv(document.getElementById('archivInput').value.trim());
+    });
+  });
+
+  // Archiv neu rendern beim Tab-Wechsel
+  var origSwitch2 = window.switchTab;
+  window.switchTab = function(name){
+    origSwitch2(name);
+    if(name === 'archiv'){
+      document.getElementById('archivInput').value = '';
+      renderArchiv('');
+    }
+  };
+
+  /* ── UHRZEIT live ── */
+  function aktualisiereUhrzeit(){
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2,'0');
+    var m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('statusTime').textContent = h + ':' + m;
+  }
+  aktualisiereUhrzeit();
+  setInterval(aktualisiereUhrzeit, 10000);
+
+  /* ── GPS Geolocation ── */
+  var gpsDot = document.getElementById('gpsDot');
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      function(){ gpsDot.className = 'gps-indicator on'; },
+      function(){ gpsDot.className = 'gps-indicator off'; }
+    );
+  } else {
+    gpsDot.className = 'gps-indicator off';
+  }
+
+  /* STABLE HEIGHT — eliminates address bar jumping */
+  function setAppHeight() {
+    document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight, 100); });
+
+  // ── LAGER-OVERLAY ────────────────────────────────────────────────────────
+  function ortIcon(ort){
+    if(!ort) return '📦';
+    var o = ort.toLowerCase();
+    if(o.indexOf('aquarium') !== -1) return '🐟';
+    if(o.indexOf('zarges') !== -1 || o.indexOf('box') !== -1) return '📦';
+    if(o.indexOf('kleiderschrank') !== -1) return '👔';
+    if(o.indexOf('regal') !== -1) return '🗄';
+    if(o.indexOf('keller') !== -1) return '🏠';
+    if(o.indexOf('garage') !== -1) return '🚗';
+    if(o.indexOf('dachboden') !== -1) return '📐';
+    return '📦';
+  }
+
+  function openLager(){
+    var ex = document.getElementById('lagerOverlay');
+    if(ex) ex.parentNode.removeChild(ex);
+    var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
+    // Alle eindeutigen Orts-Werte sammeln
+    var orteMap = {};
+    pool.forEach(function(m){
+      var ort = (m.ort||'').split('·')[0].trim() + (m.ort && m.ort.indexOf('·') !== -1 ? ' · ' + m.ort.split('·').slice(1).join('·').trim() : '');
+      // Vereinfachter Ort: erste zwei Segmente
+      var segs = (m.ort||'').split('·').map(function(s){ return s.trim(); });
+      var ortKey = segs.slice(0,2).join(' · ');
+      if(!ortKey) return;
+      if(!orteMap[ortKey]) orteMap[ortKey] = [];
+      orteMap[ortKey].push(m);
+    });
+    var orte = Object.keys(orteMap).sort();
+    renderLagerOrte(orte, orteMap);
+  }
+
+  // Gefilterter Lager-Einstieg (z.B. nur Zarges-Boxen)
+  function openLagerGefiltert(filter){
+    var ex = document.getElementById('lagerOverlay');
+    if(ex) ex.parentNode.removeChild(ex);
+    var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
+    var orteMap = {};
+    pool.forEach(function(m){
+      var segs = (m.ort||'').split('·').map(function(s){ return s.trim(); });
+      var ortKey = segs.slice(0,2).join(' · ');
+      if(!ortKey) return;
+      if(!orteMap[ortKey]) orteMap[ortKey] = [];
+      orteMap[ortKey].push(m);
+    });
+    var orte = Object.keys(orteMap).filter(function(o){
+      return o.toLowerCase().indexOf(filter.toLowerCase()) !== -1;
+    }).sort();
+    // Falls keine Treffer — alle zeigen
+    if(orte.length === 0) orte = Object.keys(orteMap).sort();
+    renderLagerOrte(orte, orteMap);
+  }
+
+  function renderLagerOrte(orte, orteMap){
+    var ex = document.getElementById('lagerOverlay');
+    if(ex) ex.parentNode.removeChild(ex);
+    var ov = document.createElement('div');
+    ov.id = 'lagerOverlay';
+    var html = '<div class="lager-header">'
+      + '<span class="lager-back" id="lagerClose">✕</span>'
+      + '<div><div class="lager-title">Lager</div>'
+      + '<div class="lager-subtitle">JÜRGEN REMUS · BESTAND</div></div>'
+      + '</div>'
+      + '<div class="lager-scroll" id="lagerScroll">';
+    orte.forEach(function(ort){
+      var count = orteMap[ort].length;
+      html += '<div class="lager-ort-card" data-ort="' + ort + '">'
+        + '<div class="lager-ort-icon">' + ortIcon(ort) + '</div>'
+        + '<div><div class="lager-ort-name">' + ort + '</div>'
+        + '<div class="lager-ort-sub">' + count + ' Eintrag' + (count !== 1 ? 'einträge' : '') + '</div></div>'
+        + '<div class="lager-ort-count">' + count + '</div>'
+        + '</div>';
+    });
+    html += '</div>';
+    ov.innerHTML = html;
+    document.querySelector('.phone').appendChild(ov);
+    document.getElementById('lagerClose').addEventListener('click', function(){
+      ov.parentNode.removeChild(ov);
+    });
+    ov.querySelectorAll('.lager-ort-card').forEach(function(card){
+      card.addEventListener('click', function(){
+        var ort = card.getAttribute('data-ort');
+        renderLagerEintraege(ort, orteMap[ort], orte, orteMap);
+      });
+    });
+  }
+
+  function renderLagerEintraege(ort, items, orte, orteMap){
+    var ex = document.getElementById('lagerOverlay');
+    if(ex) ex.parentNode.removeChild(ex);
+    var ov = document.createElement('div');
+    ov.id = 'lagerOverlay';
+
+    // Gruppieren nach Art, alphabetisch
+    var gruppen = {};
+    items.forEach(function(m){
+      var art = m.art || 'Sonstiges';
+      if(!gruppen[art]) gruppen[art] = [];
+      gruppen[art].push(m);
+    });
+    var artKeys = Object.keys(gruppen).sort();
+    artKeys.forEach(function(art){
+      gruppen[art].sort(function(a,b){ return a.name.localeCompare(b.name); });
+    });
+
+    var html = '<div class="lager-header">'
+      + '<span class="lager-back" id="lagerBack">‹</span>'
+      + '<div><div class="lager-title">' + ort + '</div>'
+      + '<div class="lager-subtitle">' + items.length + ' Einträge · ' + artKeys.length + ' Kategorien</div></div>'
+      + '</div>'
+      + '<div class="lager-scroll" id="lagerScroll">';
+
+    artKeys.forEach(function(art){
+      var gruppe = gruppen[art];
+      html += '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.12em;padding:10px 2px 6px;">'
+        + art.toUpperCase() + ' (' + gruppe.length + ')</div>';
+      gruppe.forEach(function(m){
+        html += '<div class="lager-item" data-name="' + m.name + '">'
+          + '<img class="lager-item-thumb" src="' + m.foto + '" alt="' + m.name + '">'
+          + '<div><div class="lager-item-name">' + m.name + '</div>'
+          + '<div class="lager-item-meta">' + m.datum + '</div></div>'
+          + '</div>';
+      });
+    });
+
+    html += '</div>';
+    ov.innerHTML = html;
+    document.querySelector('.phone').appendChild(ov);
+
+    var itemMap = {};
+    items.forEach(function(m){ itemMap[m.name] = m; });
+    ov.querySelectorAll('.lager-item').forEach(function(el){
+      el.addEventListener('click', function(){
+        var m = itemMap[el.getAttribute('data-name')];
+        if(m) openMockDetail(m);
+      });
+    });
+    document.getElementById('lagerBack').addEventListener('click', function(){
+      renderLagerOrte(orte, orteMap);
+    });
+  }
+
+  // Bestand-Kachel Event
+  var lagerCard = document.querySelector('.themen-card[data-preset="Bestand"]');
+  if(lagerCard){
+    lagerCard.addEventListener('click', function(e){
+      e.stopPropagation();
+      openLager();
+    });
+  }
+
+  // Zarges-Kachel Event — öffnet Lager gefiltert auf Zarges-Boxen
+  var zargesCard = document.querySelector('.themen-card[data-preset="Zarges"]');
+  if(zargesCard){
+    zargesCard.addEventListener('click', function(e){
+      e.stopPropagation();
+      openLagerGefiltert('Zarges');
+    });
+  }
+
+  // Bestand-Zähler setzen
+  (function(){
+    var pool = mockDaten.concat(mockAquarium);
+    var el = document.getElementById('bestandCount');
+    if(el) el.textContent = pool.length + ' Einträge';
+  })();
+
+
+  // ── KI-SCANNER DEMO-FLOW ─────────────────────────────────────────────────
+  // Mock: Box-Nummern die der Scanner "erkennen" kann
+  var scannerBoxen = [
+    { label: 'Zarges-Box 1',  ortKey: 'Garage · Zarges-Box 1'  },
+    { label: 'Zarges-Box 2',  ortKey: 'Garage · Zarges-Box 2'  },
+    { label: 'Zarges-Box 3',  ortKey: 'Garage · Zarges-Box 3'  },
+    { label: 'Zarges-Box 4',  ortKey: 'Garage · Zarges-Box 4'  },
+    { label: 'Zarges-Box 5',  ortKey: 'Garage · Zarges-Box 5'  },
+    { label: 'Zarges-Box 6',  ortKey: 'Garage · Zarges-Box 6'  },
+    { label: 'Zarges-Box 7',  ortKey: 'Garage · Zarges-Box 7'  },
+    { label: 'Zarges-Box 8',  ortKey: 'Garage · Zarges-Box 8'  },
+    { label: 'Zarges-Box 9',  ortKey: 'Garage · Zarges-Box 9'  },
+    { label: 'Zarges-Box 10', ortKey: 'Garage · Zarges-Box 10' },
+    { label: 'Zarges-Box 11', ortKey: 'Garage · Zarges-Box 11' },
+    { label: 'Zarges-Box 12', ortKey: 'Garage · Zarges-Box 12' },
+    { label: 'Zarges-Box 13', ortKey: 'Garage · Zarges-Box 13' },
+    { label: 'Zarges-Box 14', ortKey: 'Garage · Zarges-Box 14' },
+    { label: 'Zarges-Box 15', ortKey: 'Garage · Zarges-Box 15' },
+    { label: 'Zarges-Box 16', ortKey: 'Garage · Zarges-Box 16' },
+    { label: 'Zarges-Box 17', ortKey: 'Garage · Zarges-Box 17' },
+    { label: 'Zarges-Box 18', ortKey: 'Garage · Zarges-Box 18' },
+    { label: 'Zarges-Box 19', ortKey: 'Garage · Zarges-Box 19' },
+    { label: 'Zarges-Box 20', ortKey: 'Garage · Zarges-Box 20' },
+    { label: 'Zarges-Box 21', ortKey: 'Garage · Zarges-Box 21' },
+    { label: 'Zarges-Box 22', ortKey: 'Garage · Zarges-Box 22' },
+    { label: 'Zarges-Box 23', ortKey: 'Garage · Zarges-Box 23' },
+    { label: 'Zarges-Box 24', ortKey: 'Garage · Zarges-Box 24' },
+    { label: 'Zarges-Box 25', ortKey: 'Garage · Zarges-Box 25' },
+  ];
+
+
+
+
+
+
+
+  var scannerBoxIdx = 0; // rotiert durch die Boxen für Demo
+
+  function startKiScanDemo(){
+    // Scan-Overlay aufbauen
+    var ex = document.getElementById('kiScanOverlay');
+    if(ex) ex.parentNode.removeChild(ex);
+
+    var ov = document.createElement('div');
+    ov.id = 'kiScanOverlay';
+    ov.style.cssText = 'position:absolute;inset:0;z-index:50;background:rgba(14,34,54,0.96);border-radius:37px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;';
+
+    ov.innerHTML = '<div style="width:160px;height:160px;border-radius:16px;border:2px solid #E04040;position:relative;display:flex;align-items:center;justify-content:center;">'
+      + '<div style="position:absolute;top:-2px;left:-2px;width:24px;height:24px;border-top:3px solid #F5C840;border-left:3px solid #F5C840;border-radius:4px 0 0 0;"></div>'
+      + '<div style="position:absolute;top:-2px;right:-2px;width:24px;height:24px;border-top:3px solid #F5C840;border-right:3px solid #F5C840;border-radius:0 4px 0 0;"></div>'
+      + '<div style="position:absolute;bottom:-2px;left:-2px;width:24px;height:24px;border-bottom:3px solid #F5C840;border-left:3px solid #F5C840;border-radius:0 0 0 4px;"></div>'
+      + '<div style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-bottom:3px solid #F5C840;border-right:3px solid #F5C840;border-radius:0 0 4px 0;"></div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:.15em;text-align:center;">ZARGES<br>BOX</div>'
+      + '</div>'
+      + '<div id="kiScanStatus" style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:.12em;">SCANNE...</div>'
+      + '<div id="kiScanResult" style="display:none;text-align:center;">'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.15em;margin-bottom:6px;">KI ERKANNT</div>'
+      + '<div id="kiScanLabel" style="font-size:20px;font-weight:700;color:#F5C840;"></div>'
+      + '</div>'
+      + '<div id="kiScanClose" style="position:absolute;top:16px;right:16px;font-size:16px;color:rgba(255,255,255,0.4);cursor:pointer;padding:6px;">✕</div>';
+
+    document.querySelector('.phone').appendChild(ov);
+    document.getElementById('kiScanClose').addEventListener('click', function(){
+      ov.parentNode.removeChild(ov);
+    });
+
+    // Scan-Animation: 1.2s scannen → Erkennung zeigen → 0.8s warten → Inhalt öffnen
+    var box = scannerBoxen[scannerBoxIdx % scannerBoxen.length];
+    scannerBoxIdx++;
+
+    setTimeout(function(){
+      document.getElementById('kiScanStatus').textContent = 'ANALYSIERE...';
+    }, 400);
+
+    setTimeout(function(){
+      document.getElementById('kiScanStatus').style.display = 'none';
+      var res = document.getElementById('kiScanResult');
+      res.style.display = 'block';
+      document.getElementById('kiScanLabel').textContent = box.label;
+    }, 1200);
+
+    setTimeout(function(){
+      ov.parentNode.removeChild(ov);
+      // Inhalt der erkannten Box öffnen
+      oeffneBoxInhalt(box);
+    }, 2200);
+  }
+
+  function oeffneBoxInhalt(box){
+    var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
+    // Alle Einträge die zu diesem Ort gehören
+    var items = pool.filter(function(m){
+      return (m.ort||'').indexOf(box.label) !== -1;
+    });
+    // Alle Orts-Daten für Zurück-Navigation
+    var orteMap = {};
+    pool.forEach(function(m){
+      var segs = (m.ort||'').split('·').map(function(s){ return s.trim(); });
+      var ortKey = segs.slice(0,2).join(' · ');
+      if(!ortKey) return;
+      if(!orteMap[ortKey]) orteMap[ortKey] = [];
+      orteMap[ortKey].push(m);
+    });
+    var orte = Object.keys(orteMap).filter(function(o){
+      return o.toLowerCase().indexOf('zarges') !== -1;
+    }).sort();
+    renderLagerEintraege(box.ortKey, items, orte, orteMap);
+  }
+
+  // Scanner-Button: im KI-Modus → Demo-Flow starten
+  // Originalhandler überschreiben
+  var origScanBtn = document.querySelector('.scanner-btn');
+  if(origScanBtn){
+    origScanBtn.removeEventListener('click', origScanBtn._handler);
+    origScanBtn.addEventListener('click', function(e){
+      if(aktModus === 'ai'){
+        e.stopPropagation();
+        startKiScanDemo();
+        return;
+      }
+      if(aktModus === 'lens'){
+        window.open('https://lens.google.com', '_blank');
+        return;
+      }
+      // Foto-Modus: original Kamera
+      document.getElementById('s-home').classList.remove('active');
+      document.getElementById('s-kamera').classList.add('active');
+    }, true);
+  }
+
+</script>
+</body>
+</html>

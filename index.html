@@ -2,167 +2,223 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1B3A57">
 <title>kariOrg · Karioli · Demo</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;}
+
   :root{
-    --blue:#1B3A57;
-    --green:#4AE040;
-    --yellow:#F0C040;
-    --red:#E04040;
-    --fs-xs:10px;
-    --fs-sm:12px;
-    --fs-md:15px;
-    --fs-lg:20px;
-    --fs-xl:28px;
-  }
-  html,body{
-    width:100%;height:100%;
-    background:var(--blue);
-    font-family:'Inter',sans-serif;
-    color:#fff;
-    overflow-x:hidden;
-  }
-  .wrap{
-    min-height:100vh;
-    display:flex;flex-direction:column;
-    align-items:center;justify-content:center;
-    padding:32px 20px 40px;
-    gap:0;
+    --blue:      #1B3A57;
+    --blue-mid:  #2A5480;
+    --gold:      #C8A050;
+    --gold-soft: rgba(200,160,80,0.18);
+    --red:       #E04040;
+    --red-soft:  rgba(224,64,64,0.15);
+    --white:     #FFFFFF;
+    --fs-xl: 18px;
+    --fs-md: 15px;
+    --fs-sm: 12px;
+    --fs-xs: 10px;
   }
 
-  /* ── HEADER ── */
+  html,body{
+    height:100%;
+    background:linear-gradient(160deg,#0E2236 0%,#1B3A57 50%,#0E2236 100%);
+    font-family:'DM Sans',sans-serif;
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:24px 16px 32px;
+  }
+
+  /* HEADER */
   .header{
-    display:flex;flex-direction:column;align-items:center;
+    text-align:center;
     margin-bottom:36px;
   }
-  .brand{
+  .header-brand{
     font-family:'DM Mono',monospace;
-    font-size:var(--fs-xs);letter-spacing:.22em;
-    color:rgba(255,255,255,0.35);
-    margin-bottom:10px;
+    font-size:var(--fs-xs);
+    letter-spacing:.18em;
+    color:rgba(255,255,255,0.38);
     text-transform:uppercase;
+    margin-bottom:10px;
   }
-  .logo{
-    font-size:var(--fs-xl);font-weight:900;
-    letter-spacing:-.01em;color:#fff;
-  }
-  .logo span{color:rgba(255,255,255,0.35);}
-  .tagline{
+  .header-logo{
     font-family:'DM Mono',monospace;
-    font-size:var(--fs-xs);letter-spacing:.14em;
-    color:rgba(255,255,255,0.28);
-    margin-top:8px;text-align:center;
+    font-size:28px;
+    font-weight:500;
+    letter-spacing:.06em;
+    color:#fff;
+  }
+  .header-logo span{
+    color:var(--gold);
+  }
+  .header-sub{
+    font-size:var(--fs-sm);
+    color:rgba(255,255,255,0.42);
+    margin-top:8px;
+    letter-spacing:.04em;
   }
 
-  /* ── MODUL-KACHELN ── */
-  .module-list{
-    display:flex;flex-direction:column;gap:14px;
-    width:100%;max-width:340px;
+  /* MODULE CARDS */
+  .cards{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    width:100%;
+    max-width:340px;
   }
-  .module-card{
-    border-radius:20px;padding:20px 20px 20px 16px;
-    display:flex;align-items:center;gap:16px;
+
+  .card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    border-radius:18px;
+    padding:18px 20px;
+    text-decoration:none;
+    color:#fff;
     border:1px solid rgba(255,255,255,0.10);
     background:rgba(255,255,255,0.06);
+    transition:background .15s, transform .1s;
     cursor:pointer;
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .12s,background .15s;
-    text-decoration:none;color:inherit;
+    position:relative;
+    overflow:hidden;
   }
-  .module-card:active{transform:scale(.97);background:rgba(255,255,255,0.10);}
-  .module-card.locked{opacity:0.45;cursor:default;pointer-events:none;}
-
-  .ring{
-    width:56px;height:56px;border-radius:50%;
-    background:linear-gradient(145deg,#FFFFFF 0%,#D8E8F4 100%);
-    border:4px solid var(--green);
-    box-shadow:0 0 0 2px rgba(74,224,64,0.2);
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-    font-family:'DM Mono',monospace;
-    font-size:9px;font-weight:700;letter-spacing:.06em;
-    color:var(--green);
-    transition:border-color .2s,color .2s;
+  .card:active{
+    transform:scale(0.98);
   }
-  .ring.yellow{border-color:var(--yellow);box-shadow:0 0 0 2px rgba(240,192,64,0.2);color:var(--yellow);}
-  .ring.red{border-color:var(--red);box-shadow:0 0 0 2px rgba(224,64,64,0.2);color:var(--red);}
+  .card:hover{
+    background:rgba(255,255,255,0.10);
+  }
 
-  .module-info{flex:1;}
-  .module-name{
-    font-size:var(--fs-lg);font-weight:800;
-    color:#fff;letter-spacing:.01em;
+  /* M1 — Haushalt */
+  .card-m1{
+    border-color:rgba(200,160,80,0.30);
+    background:rgba(200,160,80,0.10);
+  }
+  .card-m1 .card-icon{font-size:30px;}
+  .card-m1 .card-tag{color:var(--gold);}
+  .card-m1 .card-badge{background:var(--gold-soft);color:var(--gold);}
+
+  /* M2 — Hobby */
+  .card-m2{
+    border-color:rgba(58,116,168,0.40);
+    background:rgba(42,84,128,0.15);
+  }
+  .card-m2 .card-icon{font-size:30px;}
+  .card-m2 .card-tag{color:#6AAFD8;}
+  .card-m2 .card-badge{background:rgba(58,116,168,0.20);color:#6AAFD8;}
+
+  /* M3 — Experte */
+  .card-m3{
+    border-color:rgba(224,64,64,0.40);
+    background:rgba(224,64,64,0.10);
+  }
+  .card-m3 .card-icon{font-size:30px;}
+  .card-m3 .card-tag{color:#F07070;}
+  .card-m3 .card-badge{background:rgba(224,64,64,0.18);color:#F07070;}
+
+  .card-icon{flex-shrink:0;width:44px;text-align:center;}
+
+  .card-body{flex:1;}
+  .card-title{
+    font-size:var(--fs-xl);
+    font-weight:700;
+    letter-spacing:.02em;
     margin-bottom:4px;
   }
-  .module-sub{
+  .card-tag{
     font-family:'DM Mono',monospace;
-    font-size:var(--fs-xs);letter-spacing:.09em;
-    color:rgba(255,255,255,0.35);
-    line-height:1.5;
+    font-size:var(--fs-xs);
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    opacity:.85;
+    margin-bottom:5px;
   }
-  .module-arrow{
-    font-size:20px;color:rgba(255,255,255,0.25);
-    flex-shrink:0;
-  }
-  .module-lock{
-    font-size:18px;flex-shrink:0;opacity:0.5;
+  .card-desc{
+    font-size:var(--fs-sm);
+    color:rgba(255,255,255,0.48);
+    line-height:1.45;
   }
 
-  /* ── FOOTER ── */
-  .footer{
-    margin-top:40px;
+  .card-badge{
     font-family:'DM Mono',monospace;
-    font-size:var(--fs-xs);letter-spacing:.14em;
-    color:rgba(255,255,255,0.18);
+    font-size:var(--fs-xs);
+    letter-spacing:.10em;
+    padding:4px 9px;
+    border-radius:8px;
+    flex-shrink:0;
+    font-weight:500;
+  }
+
+  /* FOOTER */
+  .footer{
+    margin-top:36px;
+    font-family:'DM Mono',monospace;
+    font-size:var(--fs-xs);
+    letter-spacing:.14em;
+    color:rgba(255,255,255,0.22);
     text-align:center;
   }
+  .footer span{color:rgba(200,160,80,0.55);}
 </style>
 </head>
 <body>
-<div class="wrap">
 
   <div class="header">
-    <div class="brand">Karioli · Projekt Blau</div>
-    <div class="logo">kari<span>Org</span></div>
-    <div class="tagline">Ein Gedächtnis für Dinge</div>
+    <div class="header-brand">Karioli · Projekt Blau</div>
+    <div class="header-logo">kari<span>Org</span></div>
+    <div class="header-sub">Demo · Drei Module · Ein System</div>
   </div>
 
-  <div class="module-list">
+  <div class="cards">
 
-    <a class="module-card" href="kariorg_m1.html">
-      <div class="ring">FOTO</div>
-      <div class="module-info">
-        <div class="module-name">Haushalt</div>
-        <div class="module-sub">Kamera · Du benennst · Du findest</div>
+    <!-- Modul 1 — Haushalt -->
+    <a class="card card-m1" href="kariorg_m1.html">
+      <div class="card-icon">🏠</div>
+      <div class="card-body">
+        <div class="card-tag">Modul 1</div>
+        <div class="card-title">Haushalt</div>
+        <div class="card-desc">Kamera · Du benennst · Du findest</div>
       </div>
-      <div class="module-arrow">›</div>
+      <div class="card-badge">LIVE</div>
     </a>
 
-    <a class="module-card" href="kariorg_m2.html">
-      <div class="ring yellow">LENS</div>
-      <div class="module-info">
-        <div class="module-name">Hobby</div>
-        <div class="module-sub">Kamera & Lens · Bestätigen · Forschen</div>
+    <!-- Modul 2 — Hobby -->
+    <a class="card card-m2" href="kariorg_m2.html">
+      <div class="card-icon">🔧</div>
+      <div class="card-body">
+        <div class="card-tag">Modul 2</div>
+        <div class="card-title">Hobby</div>
+        <div class="card-desc">Kamera & Lens · Bestätigen · Forschen</div>
       </div>
-      <div class="module-arrow">›</div>
+      <div class="card-badge">LIVE</div>
     </a>
 
-    <div class="module-card locked">
-      <div class="ring red">KI</div>
-      <div class="module-info">
-        <div class="module-name">Experte</div>
-        <div class="module-sub">KI-Scanner · Erkennt selbst · Liefert alles</div>
+    <!-- Modul 3 — Experte -->
+    <a class="card card-m3" href="kariorg_m3.html">
+      <div class="card-icon">🧭</div>
+      <div class="card-body">
+        <div class="card-tag">Modul 3</div>
+        <div class="card-title">Experte</div>
+        <div class="card-desc">KI-Scanner · Erkennt selbst · Liefert alles</div>
       </div>
-      <div class="module-lock">🔒</div>
-    </div>
+      <div class="card-badge">IN BAU</div>
+    </a>
 
   </div>
 
-  <div class="footer">kariOrg · Demo · August 2026</div>
+  <div class="footer">
+    <span>Karioli</span> · August 2026 · Vertraulich
+  </div>
 
-</div>
 </body>
 </html>
