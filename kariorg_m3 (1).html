@@ -348,6 +348,90 @@
     transition:transform .1s;
   }
 
+  /* ── FLÄCHEN-MARKER ── */
+  #flaechenToggle{
+    position:absolute;top:8px;right:44px;z-index:20;
+    display:flex;border-radius:10px;overflow:hidden;
+    border:1px solid rgba(255,255,255,0.25);
+    background:rgba(0,0,0,0.45);
+  }
+  .flaechen-opt{
+    padding:5px 9px;
+    font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;
+    color:rgba(255,255,255,0.45);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s,color .15s;
+  }
+  .flaechen-opt.active{background:rgba(255,255,255,0.88);color:var(--blue);font-weight:700;}
+  #rechteckCanvas{
+    position:absolute;inset:0;width:100%;height:100%;
+    border-radius:10px;display:none;pointer-events:none;
+  }
+  /* Mengenfeld-Zeile im Modal */
+  .modal-menge-row{display:flex;gap:6px;margin-top:0;}
+  .modal-input-menge{
+    width:60px;border:1.5px solid rgba(27,58,87,0.18);
+    border-radius:7px;padding:7px 9px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-xs);
+    color:var(--blue);outline:none;background:#FAFCFF;
+    transition:border-color .15s;box-sizing:border-box;text-align:center;
+  }
+  .modal-input-menge:focus{border-color:var(--blue);}
+  .modal-input-einheit{
+    flex:1;border:1.5px solid rgba(27,58,87,0.18);
+    border-radius:7px;padding:7px 9px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-xs);
+    color:var(--blue);outline:none;background:#FAFCFF;
+    transition:border-color .15s;box-sizing:border-box;
+  }
+  .modal-input-einheit:focus{border-color:var(--blue);}
+  #benennMengeSection{display:none;}
+  /* Freitext-Textarea */
+  .modal-textarea{
+    width:100%;border:1.5px solid rgba(27,58,87,0.18);
+    border-radius:7px;padding:7px 9px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-xs);
+    color:var(--blue);outline:none;background:#FAFCFF;
+    resize:none;min-height:60px;line-height:1.5;
+    transition:border-color .15s;box-sizing:border-box;
+  }
+  .modal-textarea:focus{border-color:var(--blue);}
+  /* Bestand-Block im Detail-Overlay */
+  .detail-bestand{
+    flex-shrink:0;padding:10px 14px;
+    border-top:1px solid rgba(255,255,255,0.08);
+  }
+  .bestand-zeile{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:6px;
+  }
+  .bestand-label{font-size:11px;color:rgba(255,255,255,0.5);}
+  .bestand-wert{
+    font-family:'DM Mono',monospace;font-size:13px;
+    font-weight:700;color:#fff;
+  }
+  .bestand-wert.rest{color:#4AE040;}
+  .entnahme-row{display:flex;gap:6px;margin-top:8px;}
+  .entnahme-btn{
+    flex:1;padding:8px 0;border-radius:8px;text-align:center;
+    font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    background:rgba(224,64,64,0.18);border:1px solid rgba(224,64,64,0.4);
+    color:#F07070;transition:background .15s;
+  }
+  .entnahme-btn:active{background:rgba(224,64,64,0.35);}
+  .entnahme-input{
+    width:64px;border:1px solid rgba(255,255,255,0.2);
+    border-radius:8px;padding:7px 8px;text-align:center;
+    font-family:'DM Mono',monospace;font-size:11px;color:#fff;
+    background:rgba(255,255,255,0.08);outline:none;box-sizing:border-box;
+  }
+  .detail-freitext{
+    flex-shrink:0;padding:8px 14px 12px;
+    font-size:11px;color:rgba(255,255,255,0.55);
+    line-height:1.6;white-space:pre-wrap;overflow-y:auto;max-height:80px;
+    border-top:1px solid rgba(255,255,255,0.06);
+  }
+
   /* ── BENENNUNGS-MODAL ── */
   .modal-overlay{
     position:absolute;inset:0;z-index:50;
@@ -1008,8 +1092,13 @@
       <div id="kameraWrap">
         <video id="kameraVideo" autoplay playsinline muted></video>
         <canvas id="kameraCanvas"></canvas>
+        <canvas id="rechteckCanvas"></canvas>
         <div id="kameraHint">Antippen zum Markieren</div>
         <div id="markerDot" class="marker-dot"></div>
+        <div id="flaechenToggle">
+          <div class="flaechen-opt active" id="optPunkt">Punkt</div>
+          <div class="flaechen-opt" id="optFlaeche">Fläche</div>
+        </div>
       </div>
     </div>
 
@@ -1051,6 +1140,25 @@
         <div class="detail-dot" id="detailDot"></div>
       </div>
       <div class="detail-datum" id="detailDatum"></div>
+      <div class="detail-freitext" id="detailFreitext" style="display:none;"></div>
+      <div class="detail-bestand" id="detailBestand" style="display:none;">
+        <div class="bestand-zeile">
+          <span class="bestand-label">Startbestand</span>
+          <span class="bestand-wert" id="bestandStart">—</span>
+        </div>
+        <div class="bestand-zeile">
+          <span class="bestand-label">Entnahmen</span>
+          <span class="bestand-wert" id="bestandEntnahmen">0</span>
+        </div>
+        <div class="bestand-zeile" style="margin-bottom:0;">
+          <span class="bestand-label">Restbestand</span>
+          <span class="bestand-wert rest" id="bestandRest">—</span>
+        </div>
+        <div class="entnahme-row">
+          <input class="entnahme-input" id="entnahmeInput" type="number" min="1" value="1"/>
+          <div class="entnahme-btn" id="entnahmeBtn">− Entnehmen</div>
+        </div>
+      </div>
     </div>
 
     <!-- ARCHIV-Tab -->
@@ -1086,6 +1194,15 @@
       <input id="benennNaechster" class="modal-input-sm" type="date"/>
       <div class="modal-label">Notiz (optional)</div>
       <input id="benennNotiz" class="modal-input-sm" type="text" placeholder="z.B. TÜV alle 2 Jahre …" autocomplete="off"/>
+      <div class="modal-label">Dokumentation (optional)</div>
+      <textarea id="benennFreitext" class="modal-textarea" placeholder="Winzer, Jahrgang, Händler, Preis, Hinweise …"></textarea>
+      <div id="benennMengeSection">
+        <div class="modal-label">Startbestand</div>
+        <div class="modal-menge-row">
+          <input id="benennMenge" class="modal-input-menge" type="number" min="1" placeholder="z.B. 6" autocomplete="off"/>
+          <input id="benennEinheit" class="modal-input-einheit" type="text" placeholder="z.B. Flaschen" autocomplete="off"/>
+        </div>
+      </div>
       <div class="modal-buttons">
         <div class="modal-btn secondary" id="benennAbbruch">Abbruch</div>
         <div class="modal-btn primary" id="benennOk">Speichern</div>
@@ -1492,10 +1609,31 @@
   var canvas = document.getElementById('kameraCanvas');
   var dot    = document.getElementById('markerDot');
   var wrap   = document.getElementById('kameraWrap');
+  var rCanvas= document.getElementById('rechteckCanvas');
+
+  // ── Flächen-Modus
+  var flaechenModus = false;
+  document.getElementById('optPunkt').addEventListener('click', function(){
+    flaechenModus = false;
+    document.getElementById('optPunkt').classList.add('active');
+    document.getElementById('optFlaeche').classList.remove('active');
+    document.getElementById('kameraHint').textContent = 'Antippen zum Markieren';
+  });
+  document.getElementById('optFlaeche').addEventListener('click', function(){
+    flaechenModus = true;
+    document.getElementById('optFlaeche').classList.add('active');
+    document.getElementById('optPunkt').classList.remove('active');
+    document.getElementById('kameraHint').textContent = 'Bereich aufziehen';
+  });
 
   document.querySelector('.scanner-btn').addEventListener('click', function(){
     if(aktModus === 'lens'){
-      window.open('https://lens.google.com', '_blank');
+      // Android: Intent-Link öffnet Lens-App direkt; alle anderen: Browser-Fallback
+      var isAndroid = /Android/i.test(navigator.userAgent);
+      var lensUrl = isAndroid
+        ? 'intent://lens.google.com/#Intent;scheme=https;package=com.google.ar.lens;end'
+        : 'https://lens.google.com';
+      window.open(lensUrl, '_blank');
       // Demo: Modal mit Vorschlag öffnen basierend auf Einstellung
       setTimeout(function(){
         var einst = ladeLensVorschlag();
@@ -1521,55 +1659,177 @@
       });
   });
 
-  // ── Tap → Foto einfrieren + Marker setzen
-  wrap.addEventListener('click', function(e){
-    if(canvas.style.display === 'block') return; // bereits eingefroren
-    if(!stream) return;
-    var rect = wrap.getBoundingClientRect();
-    var xPx  = e.clientX - rect.left;
-    var yPx  = e.clientY - rect.top;
-    var xRel = xPx / rect.width;
-    var yRel = yPx / rect.height;
-
-    // Foto einfrieren
+  // ── Hilfsfunktion: Kamera einfrieren
+  function frierEin(){
     canvas.width  = wrap.offsetWidth;
     canvas.height = wrap.offsetHeight;
-    var ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
     video.style.display  = 'none';
     canvas.style.display = 'block';
     if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream = null; }
+  }
 
-    // Marker-Punkt positionieren
-    dot.style.left    = (xRel * 100) + '%';
-    dot.style.top     = (yRel * 100) + '%';
-    dot.style.display = 'block';
-    document.getElementById('kameraHint').style.display = 'none';
+  // ── Hilfsfunktion: Kamera-Screen sauber schließen
+  function schliesseKamera(){
+    if(stream){ stream.getTracks().forEach(function(t){ t.stop(); }); stream = null; }
+    video.style.display  = 'none';
+    canvas.style.display = 'none';
+    rCanvas.style.display= 'none';
+    dot.style.display    = 'none';
+    document.getElementById('s-kamera').classList.remove('active');
+  }
 
-    // Pending-Marker merken
-    pendingMarker = { x: xRel, y: yRel, foto: canvas.toDataURL('image/jpeg', 0.7) };
-
-    // Benennungs-Modal öffnen
+  // ── Hilfsfunktion: Modal öffnen
+  function oeffneModal(isFl){
     document.getElementById('benennInput').value    = '';
     document.getElementById('benennSerie').value    = '';
     document.getElementById('benennLetzter').value  = '';
     document.getElementById('benennNaechster').value= '';
     document.getElementById('benennNotiz').value    = '';
+    document.getElementById('benennMenge').value    = '';
+    document.getElementById('benennEinheit').value  = '';
+    document.getElementById('benennFreitext').value = '';
+    document.getElementById('benennMengeSection').style.display = isFl ? 'block' : 'none';
     document.getElementById('benennModal').classList.add('open');
     setTimeout(function(){ document.getElementById('benennInput').focus(); }, 100);
+  }
+
+  // ── PUNKT-MODUS: Tap auf laufende Kamera
+  wrap.addEventListener('click', function(e){
+    if(flaechenModus) return;               // Flächen-Modus hat eigene Logik
+    if(canvas.style.display === 'block') return;
+    if(!stream) return;
+    var r    = wrap.getBoundingClientRect();
+    var xRel = (e.clientX - r.left) / r.width;
+    var yRel = (e.clientY - r.top)  / r.height;
+    frierEin();
+    dot.style.left    = (xRel * 100) + '%';
+    dot.style.top     = (yRel * 100) + '%';
+    dot.style.display = 'block';
+    document.getElementById('kameraHint').style.display = 'none';
+    pendingMarker = { x: xRel, y: yRel, bereich: false, foto: canvas.toDataURL('image/jpeg', 0.7) };
+    oeffneModal(false);
+  });
+
+  // ── FLÄCHEN-MODUS: Einfrieren beim ersten Touch, dann Drag für Rechteck
+  var dragStart = null;
+  var dragActive = false;
+
+  function getTouchOrMouse(e){
+    if(e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  wrap.addEventListener('touchstart', function(e){
+    if(!flaechenModus) return;
+    if(!stream) return;
+    e.preventDefault();
+    frierEin();
+    document.getElementById('kameraHint').style.display = 'none';
+    rCanvas.width  = wrap.offsetWidth;
+    rCanvas.height = wrap.offsetHeight;
+    rCanvas.style.display = 'block';
+    var r = wrap.getBoundingClientRect();
+    var p = getTouchOrMouse(e);
+    dragStart = { x: p.x - r.left, y: p.y - r.top };
+    dragActive = true;
+  }, { passive: false });
+
+  wrap.addEventListener('mousedown', function(e){
+    if(!flaechenModus) return;
+    if(!stream) return;
+    frierEin();
+    document.getElementById('kameraHint').style.display = 'none';
+    rCanvas.width  = wrap.offsetWidth;
+    rCanvas.height = wrap.offsetHeight;
+    rCanvas.style.display = 'block';
+    var r = wrap.getBoundingClientRect();
+    dragStart = { x: e.clientX - r.left, y: e.clientY - r.top };
+    dragActive = true;
+  });
+
+  function zeichneRechteck(curX, curY){
+    var ctx = rCanvas.getContext('2d');
+    ctx.clearRect(0, 0, rCanvas.width, rCanvas.height);
+    var x = Math.min(dragStart.x, curX), y = Math.min(dragStart.y, curY);
+    var w = Math.abs(curX - dragStart.x), h = Math.abs(curY - dragStart.y);
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth   = 2;
+    ctx.setLineDash([5,3]);
+    ctx.strokeRect(x, y, w, h);
+    ctx.fillStyle   = 'rgba(255,255,255,0.08)';
+    ctx.fillRect(x, y, w, h);
+  }
+
+  document.addEventListener('touchmove', function(e){
+    if(!dragActive || !flaechenModus) return;
+    e.preventDefault();
+    var r = wrap.getBoundingClientRect();
+    var p = getTouchOrMouse(e);
+    zeichneRechteck(p.x - r.left, p.y - r.top);
+  }, { passive: false });
+
+  document.addEventListener('mousemove', function(e){
+    if(!dragActive || !flaechenModus) return;
+    var r = wrap.getBoundingClientRect();
+    zeichneRechteck(e.clientX - r.left, e.clientY - r.top);
+  });
+
+  function abschliessen(endX, endY){
+    if(!dragActive) return;
+    dragActive = false;
+    var r  = wrap.getBoundingClientRect();
+    var x1 = Math.min(dragStart.x, endX) / r.width;
+    var y1 = Math.min(dragStart.y, endY) / r.height;
+    var x2 = Math.max(dragStart.x, endX) / r.width;
+    var y2 = Math.max(dragStart.y, endY) / r.height;
+    if((x2-x1) < 0.05 || (y2-y1) < 0.05){  // zu klein → ignorieren
+      rCanvas.style.display = 'none';
+      document.getElementById('kameraHint').textContent = 'Bereich aufziehen';
+      document.getElementById('kameraHint').style.display = 'block';
+      return;
+    }
+    pendingMarker = {
+      bereich: true,
+      rect: { x1:x1, y1:y1, x2:x2, y2:y2 },
+      foto: canvas.toDataURL('image/jpeg', 0.7)
+    };
+    oeffneModal(true);
+  }
+
+  document.addEventListener('touchend', function(e){
+    if(!dragActive || !flaechenModus) return;
+    e.preventDefault();
+    var r = wrap.getBoundingClientRect();
+    var p = e.changedTouches[0];
+    abschliessen(p.clientX - r.left, p.clientY - r.top);
+  }, { passive: false });
+
+  document.addEventListener('mouseup', function(e){
+    if(!dragActive || !flaechenModus) return;
+    var r = wrap.getBoundingClientRect();
+    abschliessen(e.clientX - r.left, e.clientY - r.top);
   });
 
   // ── Modal: Speichern
   document.getElementById('benennOk').addEventListener('click', function(){
     var name = document.getElementById('benennInput').value.trim();
     if(!name) return;
-    pendingMarker.name          = name;
-    pendingMarker.datum         = new Date().toISOString().slice(0,10);
-    pendingMarker.preset        = aktivesPreset;
-    pendingMarker.serienNr      = document.getElementById('benennSerie').value.trim()    || null;
-    pendingMarker.letzterService= document.getElementById('benennLetzter').value         || null;
-    pendingMarker.naechsterService= document.getElementById('benennNaechster').value     || null;
-    pendingMarker.notiz         = document.getElementById('benennNotiz').value.trim()    || null;
+    pendingMarker.name            = name;
+    pendingMarker.datum           = new Date().toISOString().slice(0,10);
+    pendingMarker.preset          = aktivesPreset;
+    pendingMarker.serienNr        = document.getElementById('benennSerie').value.trim()    || null;
+    pendingMarker.letzterService  = document.getElementById('benennLetzter').value         || null;
+    pendingMarker.naechsterService= document.getElementById('benennNaechster').value       || null;
+    pendingMarker.notiz           = document.getElementById('benennNotiz').value.trim()    || null;
+    pendingMarker.freitext        = document.getElementById('benennFreitext').value.trim() || null;
+    if(pendingMarker.bereich){
+      var menge = parseInt(document.getElementById('benennMenge').value, 10);
+      pendingMarker.startbestand  = isNaN(menge) ? null : menge;
+      pendingMarker.einheit       = document.getElementById('benennEinheit').value.trim() || null;
+      pendingMarker.entnahmen     = [];
+    }
+    rCanvas.style.display = 'none';
     markerSpeicher.push(pendingMarker);
     speichereInStorage();
     pendingMarker = null;
@@ -1582,7 +1842,7 @@
         document.getElementById('kameraHint').style.display = 'none';
       } else {
         // Zurück zum Homescreen
-        document.getElementById('s-kamera').classList.remove('active');
+        schliesseKamera();
         document.getElementById('s-home').classList.add('active');
       }
     }, 1200);
@@ -1591,10 +1851,12 @@
   // ── Modal: Abbruch
   document.getElementById('benennAbbruch').addEventListener('click', function(){
     document.getElementById('benennModal').classList.remove('open');
-    dot.style.display = 'none';
+    dot.style.display    = 'none';
     canvas.style.display = 'none';
+    rCanvas.style.display= 'none';
     video.style.display  = 'block';
-    document.getElementById('kameraHint').textContent = 'Antippen zum Markieren';
+    dragActive = false;
+    document.getElementById('kameraHint').textContent = flaechenModus ? 'Bereich aufziehen' : 'Antippen zum Markieren';
     document.getElementById('kameraHint').style.display = 'block';
     navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
       .then(function(s){ stream = s; video.srcObject = s; }).catch(function(){});
@@ -1830,23 +2092,108 @@
   }
 
   // ── Detail-Overlay öffnen
+  var detailMarkerRef = null;
   function openDetail(m){
-    document.getElementById('detailName').textContent = m.name;
+    detailMarkerRef = m;
+    document.getElementById('detailName').textContent  = m.name;
     document.getElementById('detailDatum').textContent = m.datum + ' · ' + m.preset;
     var img = document.getElementById('detailImg');
     img.src = m.foto;
-    var dot = document.getElementById('detailDot');
-    // Dot-Position nach Bild-Laden setzen
-    img.onload = function(){
-      dot.style.left = (m.x * 100) + '%';
-      dot.style.top  = (m.y * 100) + '%';
-    };
-    if(img.complete){ dot.style.left = (m.x*100)+'%'; dot.style.top = (m.y*100)+'%'; }
+    var dotEl      = document.getElementById('detailDot');
+    var bestandEl  = document.getElementById('detailBestand');
+    var freitextEl = document.getElementById('detailFreitext');
+
+    // Freitext anzeigen
+    if(m.freitext){
+      freitextEl.textContent = m.freitext;
+      freitextEl.style.display = 'block';
+    } else {
+      freitextEl.style.display = 'none';
+    }
+
+    if(m.bereich && m.rect){
+      // Flächen-Marker: Rechteck zeichnen
+      dotEl.style.display = 'none';
+      img.onload = function(){ zeichneDetailRechteck(m.rect); };
+      if(img.complete) zeichneDetailRechteck(m.rect);
+      // Bestand-Block
+      if(m.startbestand !== null && m.startbestand !== undefined){
+        var einheit = m.einheit || '';
+        var totalEntnahmen = (m.entnahmen||[]).reduce(function(s,e){ return s+e; }, 0);
+        var rest = m.startbestand - totalEntnahmen;
+        document.getElementById('bestandStart').textContent     = m.startbestand + (einheit ? ' '+einheit : '');
+        document.getElementById('bestandEntnahmen').textContent = totalEntnahmen + (einheit ? ' '+einheit : '');
+        document.getElementById('bestandRest').textContent      = rest + (einheit ? ' '+einheit : '');
+        document.getElementById('entnahmeInput').value = '1';
+        bestandEl.style.display = 'block';
+      } else {
+        bestandEl.style.display = 'none';
+      }
+    } else {
+      // Punkt-Marker: Dot positionieren
+      bestandEl.style.display = 'none';
+      dotEl.style.display = 'block';
+      img.onload = function(){
+        dotEl.style.left = (m.x * 100) + '%';
+        dotEl.style.top  = (m.y * 100) + '%';
+      };
+      if(img.complete){
+        dotEl.style.left = (m.x * 100) + '%';
+        dotEl.style.top  = (m.y * 100) + '%';
+      }
+    }
     document.getElementById('detailOverlay').classList.add('open');
   }
 
+  function zeichneDetailRechteck(rect){
+    requestAnimationFrame(function(){
+      var wrap = document.getElementById('detailWrap');
+      var old  = document.getElementById('detailRektCanvas');
+      if(old) old.parentNode.removeChild(old);
+      var rc = document.createElement('canvas');
+      rc.id = 'detailRektCanvas';
+      rc.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;';
+      var bw = wrap.offsetWidth  || wrap.getBoundingClientRect().width;
+      var bh = wrap.offsetHeight || wrap.getBoundingClientRect().height;
+      if(!bw || !bh) return;
+      rc.width  = bw;
+      rc.height = bh;
+      wrap.appendChild(rc);
+      var ctx = rc.getContext('2d');
+      var x = rect.x1 * bw,  y = rect.y1 * bh;
+      var w = (rect.x2 - rect.x1) * bw, h = (rect.y2 - rect.y1) * bh;
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth   = 2;
+      ctx.setLineDash([5,3]);
+      ctx.strokeRect(x, y, w, h);
+      ctx.fillStyle   = 'rgba(255,255,255,0.06)';
+      ctx.fillRect(x, y, w, h);
+    });
+  }
+
+  // ── Entnahme-Button
+  document.getElementById('entnahmeBtn').addEventListener('click', function(){
+    if(!detailMarkerRef || !detailMarkerRef.bereich) return;
+    var n = parseInt(document.getElementById('entnahmeInput').value, 10);
+    if(isNaN(n) || n < 1) return;
+    if(!detailMarkerRef.entnahmen) detailMarkerRef.entnahmen = [];
+    detailMarkerRef.entnahmen.push(n);
+    speichereInStorage();
+    // Anzeige aktualisieren
+    var einheit = detailMarkerRef.einheit || '';
+    var total = detailMarkerRef.entnahmen.reduce(function(s,e){ return s+e; }, 0);
+    var rest  = detailMarkerRef.startbestand - total;
+    document.getElementById('bestandEntnahmen').textContent = total + (einheit ? ' '+einheit : '');
+    document.getElementById('bestandRest').textContent      = rest  + (einheit ? ' '+einheit : '');
+    document.getElementById('entnahmeInput').value = '1';
+    renderListe();
+  });
+
   document.getElementById('detailClose').addEventListener('click', function(){
     document.getElementById('detailOverlay').classList.remove('open');
+    var rc = document.getElementById('detailRektCanvas');
+    if(rc) rc.parentNode.removeChild(rc);
+    detailMarkerRef = null;
   });
 
   // ── Mock-Detail Overlay (für Mock-Daten mit Ampel + Seriennummer)
@@ -1923,9 +2270,12 @@
     document.getElementById('mockDetailClose').addEventListener('click', function(){ ov.parentNode.removeChild(ov); });
   }
 
-  // Liste neu rendern wenn Liste-Tab geöffnet wird
+  // Liste neu rendern wenn Liste-Tab geöffnet wird; Kamera sauber schließen
   var origSwitch = window.switchTab;
   window.switchTab = function(name){
+    if(document.getElementById('s-kamera').classList.contains('active')){
+      schliesseKamera();
+    }
     origSwitch(name);
     if(name === 'liste') renderListe();
   };
