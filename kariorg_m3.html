@@ -210,7 +210,7 @@
   .ghost-label{font-size:8px;color:rgba(255,255,255,0.7);font-family:'DM Mono',monospace;letter-spacing:.04em;}
 
   /* ── CONTENT AREA ── */
-  .content{margin:0 38px 0 36px;flex:1 1 0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+  .content{margin:0 38px 0 36px;flex:1 1 0;min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;overflow:hidden;}
 
   /* ── MAIN SCANNER BUTTON ── */
   .scanner-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
@@ -275,21 +275,38 @@
   /* ── THEMEN PANEL (Bottom-Tab-Inhalt) ── */
   .screen{display:none;flex:1 1 0;min-height:0;width:100%;}
   .screen.active{display:flex;flex-direction:column;}
+  #s-home.active{align-items:center;justify-content:flex-start;padding-top:18%;}
 
   .themen-grid{
-    display:grid;grid-template-columns:1fr 1fr;
-    gap:8px;padding:4px 0;
+    display:grid;grid-template-columns:1fr 1fr 1fr;
+    gap:6px;padding:4px 0;
     overflow-y:auto;
   }
   .themen-card{
     background:rgba(255,255,255,0.12);
     border:1px solid rgba(255,255,255,0.18);
-    border-radius:12px;
-    padding:12px 10px;
+    border-radius:10px;
+    padding:7px 6px;
     cursor:pointer;text-align:center;
     transition:background .15s;
     -webkit-tap-highlight-color:transparent;
   }
+  .themen-card[data-preset="Bestand"]{
+    grid-column: 1 / -1;
+    display:flex;align-items:center;gap:10px;
+    text-align:left;padding:8px 12px;
+    background:rgba(27,58,87,0.55);
+    border:2px solid #3aad52;
+    border-radius:10px;
+    box-shadow: 0 4px 0 #2a7a3b, 0 5px 6px rgba(0,0,0,0.4);
+    transform: translateY(-2px);
+  }
+  .themen-card[data-preset="Bestand"] .tc-icon{margin-bottom:0;font-size:16px;}
+  .themen-card[data-preset="Bestand"] .tc-name{font-size:var(--fs-xs);color:rgba(255,255,255,0.55);font-weight:400;letter-spacing:.04em;}
+  .themen-card[data-preset="Bestand"] .tc-count{margin-top:0;color:rgba(255,255,255,0.28);}
+  .themen-card[data-preset="Bestand"].active-preset{background:rgba(27,58,87,0.85);border-color:#3aad52;}
+  .themen-card[data-preset="Bestand"].active-preset .tc-name{color:rgba(255,255,255,0.8);font-weight:600;}
+  .themen-card[data-preset="Bestand"].active-preset .tc-count{color:rgba(255,255,255,0.38);}
   .themen-card.active-preset{
     background:rgba(255,255,255,0.88);
     border-color:rgba(255,255,255,0.6);
@@ -297,9 +314,9 @@
   .themen-card.active-preset .tc-name{color:var(--blue);}
   .themen-card.active-preset .tc-icon{filter:none;}
   .themen-card:active{background:rgba(255,255,255,0.22);}
-  .tc-icon{font-size:24px;display:block;margin-bottom:4px;}
-  .tc-name{font-size:var(--fs-sm);font-weight:600;color:rgba(255,255,255,0.85);}
-  .tc-count{font-family:'DM Mono',monospace;font-size:var(--fs-xs);color:rgba(255,255,255,0.4);margin-top:2px;}
+  .tc-icon{font-size:18px;display:block;margin-bottom:2px;}
+  .tc-name{font-size:11px;font-weight:600;color:rgba(255,255,255,0.85);}
+  .tc-count{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.4);margin-top:1px;}
   .themen-card.active-preset .tc-count{color:rgba(27,58,87,0.45);}
 
   /* ── KAMERA-SCREEN ── */
@@ -341,9 +358,22 @@
   .modal-overlay.open{display:flex;}
   .modal-box{
     background:#FFFFFF;border-radius:16px;
-    padding:20px 18px 16px;width:220px;
+    padding:20px 18px 16px;width:270px;
     box-shadow:0 8px 28px rgba(0,0,0,0.3);
   }
+  .modal-label{
+    font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;
+    color:rgba(27,58,87,0.45);letter-spacing:.06em;text-transform:uppercase;
+    margin-top:10px;margin-bottom:3px;
+  }
+  .modal-input-sm{
+    width:100%;border:1.5px solid rgba(27,58,87,0.18);
+    border-radius:7px;padding:7px 9px;
+    font-family:'DM Sans',sans-serif;font-size:var(--fs-xs);
+    color:var(--blue);outline:none;background:#FAFCFF;
+    transition:border-color .15s;box-sizing:border-box;
+  }
+  .modal-input-sm:focus{border-color:var(--blue);}
   .modal-title{
     font-size:var(--fs-sm);font-weight:700;color:var(--blue);
     margin-bottom:12px;letter-spacing:.04em;
@@ -367,6 +397,34 @@
   .modal-btn:active{opacity:.7;}
   .modal-btn.secondary{background:#F0F4F8;color:var(--blue);}
   .modal-btn.primary{background:var(--blue);color:#FFFFFF;}
+
+  /* ── Fälligkeits-Wächter Overlay */
+  #waechterOverlay{
+    position:absolute;inset:0;z-index:60;
+    background:rgba(14,34,54,0.82);
+    display:none;align-items:flex-end;justify-content:center;
+    border-radius:37px;
+  }
+  #waechterOverlay.open{display:flex;}
+  .waechter-sheet{
+    background:#FFFFFF;border-radius:20px 20px 37px 37px;
+    width:100%;max-height:72%;overflow-y:auto;
+    padding:18px 16px 28px;box-sizing:border-box;
+  }
+  .waechter-titel{
+    font-size:var(--fs-sm);font-weight:700;color:var(--blue);
+    margin-bottom:14px;letter-spacing:.04em;
+  }
+  .waechter-row{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 0;border-bottom:1px solid rgba(27,58,87,0.08);
+  }
+  .waechter-row:last-child{border-bottom:none;}
+  .waechter-symbol{font-size:16px;flex-shrink:0;}
+  .waechter-info{flex:1;min-width:0;}
+  .waechter-name{font-size:var(--fs-xs);font-weight:600;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .waechter-sub{font-size:10px;color:rgba(27,58,87,0.5);margin-top:2px;}
+  .waechter-hint{font-size:10px;color:rgba(27,58,87,0.38);text-align:center;margin-top:12px;}
 
   /* Archiv Platzhalter */
   .placeholder{
@@ -536,6 +594,44 @@
   .einstell-badge{
     font-family:'DM Mono',monospace;font-size:var(--fs-xs);
     color:rgba(255,255,255,0.35);margin-right:6px;
+  }
+  .ki-drum-wrap{
+    position:relative;height:120px;overflow:hidden;border-radius:10px;
+    background:rgba(0,0,0,0.25);
+  }
+  .ki-drum{
+    position:absolute;top:0;left:0;right:0;
+    overflow-y:scroll;height:100%;
+    scroll-snap-type:y mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .ki-drum::-webkit-scrollbar{display:none;}
+  .ki-drum-item{
+    height:40px;display:flex;align-items:center;justify-content:center;
+    font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+    color:rgba(255,255,255,0.45);
+    scroll-snap-align:center;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+    transition:color .15s, font-weight .15s;
+    padding:0 12px;text-align:center;
+  }
+  .ki-drum-item.drum-active{color:#fff;font-weight:700;}
+  .ki-drum-selector{
+    position:absolute;top:40px;left:8px;right:8px;height:40px;
+    border-top:1px solid rgba(255,255,255,0.18);
+    border-bottom:1px solid rgba(255,255,255,0.18);
+    border-radius:6px;pointer-events:none;z-index:2;
+  }
+  .ki-drum-fade-top{
+    position:absolute;top:0;left:0;right:0;height:40px;
+    background:linear-gradient(to bottom,rgba(20,40,60,0.9),transparent);
+    pointer-events:none;z-index:2;
+  }
+  .ki-drum-fade-bot{
+    position:absolute;bottom:0;left:0;right:0;height:40px;
+    background:linear-gradient(to top,rgba(20,40,60,0.9),transparent);
+    pointer-events:none;z-index:2;
   }
 
   /* ── ARCHIV-TAB ── */
@@ -781,7 +877,19 @@
         </div>
         <div class="einstell-row">
           <span class="einstell-row-label">Modul</span>
-          <span><span class="einstell-badge">Haushalt</span><span class="einstell-row-arrow">›</span></span>
+          <span><span class="einstell-badge">Experte</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+        <div class="einstell-row">
+          <span class="einstell-row-label">Startpreset</span>
+          <span><span class="einstell-badge" id="startpresetBadge">—</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">Erfassung</div>
+        <div class="einstell-row" id="nachBestaetigungRow" style="cursor:pointer;">
+          <span class="einstell-row-label">Nach Bestätigung</span>
+          <span><span class="einstell-badge" id="nachBestaetigungBadge">Kamera offen</span><span class="einstell-row-arrow">›</span></span>
         </div>
       </div>
 
@@ -802,7 +910,27 @@
       </div>
 
       <div class="einstell-section">
-        <div class="einstell-section-title">Ghostbar</div>
+        <div class="einstell-section-title">Google Lens</div>
+        <div class="einstell-row" id="lensVorschlagRow" style="cursor:pointer;">
+          <span class="einstell-row-label">Vorschlag übernehmen</span>
+          <span><span class="einstell-badge" id="lensVorschlagBadge">Vollname</span><span class="einstell-row-arrow">›</span></span>
+        </div>
+      </div>
+
+      <div class="einstell-section">
+        <div class="einstell-section-title">KI-Scanner</div>
+        <div class="einstell-row-label" style="padding:4px 0 8px;font-size:10px;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;letter-spacing:.06em;">Verhalten nach Erkennung</div>
+        <div class="ki-drum-wrap">
+          <div class="ki-drum-fade-top"></div>
+          <div class="ki-drum-selector"></div>
+          <div class="ki-drum-fade-bot"></div>
+          <div class="ki-drum" id="kiDrum">
+            <div class="ki-drum-item" data-ki-modus="bestaetigen">Vorschlag bestätigen</div>
+            <div class="ki-drum-item" data-ki-modus="direkt">Direkt anlegen</div>
+            <div class="ki-drum-item" data-ki-modus="sprache">Spracheingabe</div>
+          </div>
+        </div>
+      </div>
         <div class="einstell-row">
           <span class="einstell-row-label">Buttons konfigurieren</span>
           <span><span class="einstell-badge">bald</span><span class="einstell-row-arrow">›</span></span>
@@ -831,11 +959,13 @@
           <span class="einstell-row-label">Karioli · Experte-Modul</span>
           <span class="einstell-row-arrow">›</span>
         </div>
+        <div class="einstell-row" id="resetDatenBtn" style="cursor:pointer;margin-top:8px;border-top:1px solid rgba(255,255,255,0.07);padding-top:12px;">
+          <span class="einstell-row-label" style="color:rgba(224,64,64,0.8);">⚠ Demo-Daten zurücksetzen</span>
+          <span class="einstell-row-arrow" style="color:rgba(224,64,64,0.6);">›</span>
+        </div>
       </div>
 
     </div>
-  </div>
-
   <!-- CONTENT AREA -->
   <div class="content">
 
@@ -890,11 +1020,6 @@
           <span class="tc-icon">🐠</span>
           <div class="tc-name">Aquarium</div>
           <div class="tc-count">3 Aquarien</div>
-        </div>
-        <div class="themen-card" data-preset="Bestand">
-          <span class="tc-icon">📋</span>
-          <div class="tc-name">Bestand</div>
-          <div class="tc-count" id="bestandCount">— Einträge</div>
         </div>
         <div class="themen-card" data-preset="Zarges">
           <span class="tc-icon">📦</span>
@@ -953,10 +1078,27 @@
     <div class="modal-box">
       <div class="modal-title">Marker benennen</div>
       <input id="benennInput" class="modal-input" type="text" placeholder="z.B. Teddys …" autocomplete="off"/>
+      <div class="modal-label">Seriennummer (optional)</div>
+      <input id="benennSerie" class="modal-input-sm" type="text" placeholder="z.B. SN-2024-00123" autocomplete="off"/>
+      <div class="modal-label">Letzter Service (optional)</div>
+      <input id="benennLetzter" class="modal-input-sm" type="date"/>
+      <div class="modal-label">Nächster Service (optional)</div>
+      <input id="benennNaechster" class="modal-input-sm" type="date"/>
+      <div class="modal-label">Notiz (optional)</div>
+      <input id="benennNotiz" class="modal-input-sm" type="text" placeholder="z.B. TÜV alle 2 Jahre …" autocomplete="off"/>
       <div class="modal-buttons">
         <div class="modal-btn secondary" id="benennAbbruch">Abbruch</div>
         <div class="modal-btn primary" id="benennOk">Speichern</div>
       </div>
+    </div>
+  </div>
+
+  <!-- FÄLLIGKEITS-WÄCHTER OVERLAY -->
+  <div id="waechterOverlay">
+    <div class="waechter-sheet">
+      <div class="waechter-titel">⏰ Fälligkeits-Wächter</div>
+      <div id="waechterListe"></div>
+      <div class="waechter-hint">Antippen zum Schließen</div>
     </div>
   </div>
 
@@ -986,6 +1128,30 @@
   }
   function speichereInStorage(){
     try{ localStorage.setItem('kariorg_marker', JSON.stringify(markerSpeicher)); }
+    catch(e){}
+  }
+  function ladeStartPreset(){
+    try{ return localStorage.getItem('kariorg_startpreset') || 'Aquarium'; }
+    catch(e){ return 'Aquarium'; }
+  }
+  function speichereStartPreset(name){
+    try{ localStorage.setItem('kariorg_startpreset', name); }
+    catch(e){}
+  }
+  function ladeNachBestaetigung(){
+    try{ return localStorage.getItem('kariorg_nach_bestaetigung') || 'kamera'; }
+    catch(e){ return 'kamera'; }
+  }
+  function speichereNachBestaetigung(wert){
+    try{ localStorage.setItem('kariorg_nach_bestaetigung', wert); }
+    catch(e){}
+  }
+  function ladeLensVorschlag(){
+    try{ return localStorage.getItem('kariorg_lens_vorschlag') || 'vollname'; }
+    catch(e){ return 'vollname'; }
+  }
+  function speichereLensVorschlag(wert){
+    try{ localStorage.setItem('kariorg_lens_vorschlag', wert); }
     catch(e){}
   }
   // ── Ampel-Konfiguration (konfigurierbar, Defaults)
@@ -1077,9 +1243,9 @@
     { name:'Marionette König', ort:'Garage · Zarges-Box 13', art:'Spielzeug', datum:'2016-06-01', preset:'Elkes Kram', naechsterService:null, serienNr:null, letzterService:'2016-06-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">👑</text></svg>' },
 
     // ── Box 14 · Sport ─────────────────────────────────────────────────
-    { name:'Ski Atomic Redster 170cm', ort:'Garage · Zarges-Box 14', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:'2027-01-01', serienNr:null, letzterService:'2025-01-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛷️</text></svg>' },
-    { name:'Skischuhe Tecnica 42', ort:'Garage · Zarges-Box 14', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2020-12-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🥾</text></svg>' },
-    { name:'Skihelm Uvex 56–59cm', ort:'Garage · Zarges-Box 14', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2020-12-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛑️</text></svg>' },
+    { name:'Ski Atomic Redster 170cm', ort:'Garage · Zarges-Box 14 · Skiausrüstung', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:'2027-01-01', serienNr:null, letzterService:'2025-01-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛷️</text></svg>' },
+    { name:'Skischuhe Tecnica 42', ort:'Garage · Zarges-Box 14 · Skiausrüstung', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2020-12-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🥾</text></svg>' },
+    { name:'Skihelm Uvex 56–59cm', ort:'Garage · Zarges-Box 14 · Skiausrüstung', art:'Sport', datum:'2020-12-01', preset:'Sport', naechsterService:null, serienNr:null, letzterService:'2020-12-01', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">⛑️</text></svg>' },
 
     // ── Box 15 · Haushalt Ersatz ──────────────────────────────────────
     { name:'Bettdecken 135×200 (×2)', ort:'Garage · Zarges-Box 15', art:'Haushalt', datum:'2023-02-10', preset:'Haushalt', naechsterService:null, serienNr:null, letzterService:'2023-02-10', foto:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">🛏️</text></svg>' },
@@ -1310,7 +1476,7 @@
 
   var markerSpeicher = ladeAusStorage();
   var pendingMarker = null;
-  var aktivesPreset = 'Aquarium';
+  var aktivesPreset = ladeStartPreset();
 
   // ── Tab-Navigation
   function switchTab(name){
@@ -1330,6 +1496,14 @@
   document.querySelector('.scanner-btn').addEventListener('click', function(){
     if(aktModus === 'lens'){
       window.open('https://lens.google.com', '_blank');
+      // Demo: Modal mit Vorschlag öffnen basierend auf Einstellung
+      setTimeout(function(){
+        var einst = ladeLensVorschlag();
+        var vorschlag = einst === 'vollname' ? 'Rowenta KM 236/B' : einst === 'kategorie' ? 'Kaffeemaschine' : '';
+        document.getElementById('benennInput').value = vorschlag;
+        document.getElementById('benennModal').classList.add('open');
+        setTimeout(function(){ document.getElementById('benennInput').focus(); }, 100);
+      }, 800);
       return;
     }
     document.getElementById('s-home').classList.remove('active');
@@ -1376,7 +1550,11 @@
     pendingMarker = { x: xRel, y: yRel, foto: canvas.toDataURL('image/jpeg', 0.7) };
 
     // Benennungs-Modal öffnen
-    document.getElementById('benennInput').value = '';
+    document.getElementById('benennInput').value    = '';
+    document.getElementById('benennSerie').value    = '';
+    document.getElementById('benennLetzter').value  = '';
+    document.getElementById('benennNaechster').value= '';
+    document.getElementById('benennNotiz').value    = '';
     document.getElementById('benennModal').classList.add('open');
     setTimeout(function(){ document.getElementById('benennInput').focus(); }, 100);
   });
@@ -1385,9 +1563,13 @@
   document.getElementById('benennOk').addEventListener('click', function(){
     var name = document.getElementById('benennInput').value.trim();
     if(!name) return;
-    pendingMarker.name  = name;
-    pendingMarker.datum = new Date().toISOString().slice(0,10);
-    pendingMarker.preset = aktivesPreset;
+    pendingMarker.name          = name;
+    pendingMarker.datum         = new Date().toISOString().slice(0,10);
+    pendingMarker.preset        = aktivesPreset;
+    pendingMarker.serienNr      = document.getElementById('benennSerie').value.trim()    || null;
+    pendingMarker.letzterService= document.getElementById('benennLetzter').value         || null;
+    pendingMarker.naechsterService= document.getElementById('benennNaechster').value     || null;
+    pendingMarker.notiz         = document.getElementById('benennNotiz').value.trim()    || null;
     markerSpeicher.push(pendingMarker);
     speichereInStorage();
     pendingMarker = null;
@@ -1395,9 +1577,14 @@
     document.getElementById('kameraHint').textContent = '✓ ' + name + ' gespeichert';
     document.getElementById('kameraHint').style.display = 'block';
     setTimeout(function(){
-      // Zurück zum Homescreen
-      document.getElementById('s-kamera').classList.remove('active');
-      document.getElementById('s-home').classList.add('active');
+      if(ladeNachBestaetigung() === 'kamera'){
+        // Kamera bleibt offen — Erfassungsmodus
+        document.getElementById('kameraHint').style.display = 'none';
+      } else {
+        // Zurück zum Homescreen
+        document.getElementById('s-kamera').classList.remove('active');
+        document.getElementById('s-home').classList.add('active');
+      }
     }, 1200);
   });
 
@@ -1498,14 +1685,64 @@
   }
 
   // ── Themen-Karte wählen
-  document.querySelectorAll('.themen-card').forEach(function(card){
-    card.addEventListener('click', function(){
-      document.querySelectorAll('.themen-card').forEach(function(c){ c.classList.remove('active-preset'); });
-      card.classList.add('active-preset');
-      var name = card.querySelector('.tc-name').textContent;
+  // ── Preset-Aktions-Sheet
+  function zeigePresetAktion(card, name){
+    var alt = document.getElementById('presetAktionSheet');
+    if(alt) alt.parentNode.removeChild(alt);
+
+    document.querySelectorAll('.themen-card').forEach(function(c){ c.classList.remove('active-preset'); });
+    card.classList.add('active-preset');
+
+    var sheet = document.createElement('div');
+    sheet.id = 'presetAktionSheet';
+    sheet.style.cssText = 'position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:40;'
+      + 'background:rgba(18,32,50,0.98);border:1px solid rgba(255,255,255,0.12);border-radius:18px;'
+      + 'padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.5);';
+
+    sheet.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.14em;text-align:center;margin-bottom:2px;">'
+      + name.toUpperCase() + '</div>'
+      + '<button id="presetBtnListe" style="font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.08em;'
+      + 'background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);'
+      + 'border-radius:12px;padding:10px 18px;cursor:pointer;text-align:left;">📋 &nbsp;Liste</button>'
+      + '<button id="presetBtnHinzu" style="font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.08em;'
+      + 'background:rgba(27,58,87,0.6);border:1px solid rgba(27,150,87,0.4);color:#3aad52;'
+      + 'border-radius:12px;padding:10px 18px;cursor:pointer;text-align:left;">＋ &nbsp;Hinzufügen</button>';
+
+    document.querySelector('.phone').appendChild(sheet);
+
+    document.getElementById('presetBtnListe').addEventListener('click', function(){
+      sheet.parentNode.removeChild(sheet);
       document.querySelector('.preset-name').textContent = name;
       aktivesPreset = name;
+      speichereStartPreset(name);
+      switchTab('liste');
+    });
+
+    document.getElementById('presetBtnHinzu').addEventListener('click', function(){
+      sheet.parentNode.removeChild(sheet);
+      document.querySelector('.preset-name').textContent = name;
+      aktivesPreset = name;
+      speichereStartPreset(name);
       switchTab('home');
+    });
+
+    // Tippen außerhalb schließt das Sheet
+    setTimeout(function(){
+      document.addEventListener('click', function schliesser(e){
+        if(!sheet.contains(e.target) && !card.contains(e.target)){
+          if(sheet.parentNode) sheet.parentNode.removeChild(sheet);
+          document.removeEventListener('click', schliesser);
+        }
+      });
+    }, 100);
+  }
+
+  document.querySelectorAll('.themen-card').forEach(function(card){
+    if(card.dataset.preset === 'Zarges') return; // eigener Handler
+    if(card.dataset.preset === 'Aquarium') return; // eigener Handler
+    card.addEventListener('click', function(){
+      var name = card.querySelector('.tc-name').textContent;
+      zeigePresetAktion(card, name);
     });
   });
 
@@ -1514,14 +1751,25 @@
     var scroll = document.getElementById('listeScroll');
     var leer   = document.getElementById('listeLeer');
     var header = document.getElementById('listeHeader');
-    header.textContent = 'MARKER · ' + markerSpeicher.length + ' Eintrag' + (markerSpeicher.length !== 1 ? 'einträge' : '');
+
+    // Vollständiger Pool: Mock + gespeicherte Marker
+    var vollerPool = mockDaten.concat(mockAquarium).concat(markerSpeicher);
+
+    // Zarges → nach ort filtern; andere Presets → nach preset
+    var gefilterteMarker = aktivesPreset === 'Zarges-Boxen'
+      ? vollerPool.filter(function(m){ return (m.ort||'').toLowerCase().indexOf('zarges') !== -1; })
+      : vollerPool.filter(function(m){ return m.preset === aktivesPreset; });
+
+    header.textContent = aktivesPreset.toUpperCase()
+      + ' · ' + gefilterteMarker.length + ' Eintrag' + (gefilterteMarker.length !== 1 ? 'einträge' : '');
+
     // Alte Einträge entfernen (nicht #listeLeer)
     Array.from(scroll.children).forEach(function(el){
       if(el.id !== 'listeLeer') el.parentNode.removeChild(el);
     });
-    if(markerSpeicher.length === 0){ leer.style.display = 'flex'; return; }
+    if(gefilterteMarker.length === 0){ leer.style.display = 'flex'; return; }
     leer.style.display = 'none';
-    markerSpeicher.forEach(function(m, idx){
+    gefilterteMarker.forEach(function(m, idx){
       var item = document.createElement('div');
       item.className = 'liste-item';
       var img = document.createElement('img');
@@ -1547,9 +1795,10 @@
         openDetail(m);
       });
 
-      // Lang halten → Löschen-Button
+      // Lang halten → Löschen-Button (nur für gespeicherte Marker)
       var holdTimer = null;
-      function startHold(){ holdTimer = setTimeout(function(){ showDelete(item, idx); }, 600); }
+      var echterIdx = markerSpeicher.indexOf(m);
+      function startHold(){ if(echterIdx < 0) return; holdTimer = setTimeout(function(){ showDelete(item, echterIdx); }, 600); }
       function cancelHold(){ clearTimeout(holdTimer); }
       item.addEventListener('touchstart', startHold, {passive:true});
       item.addEventListener('touchend', cancelHold);
@@ -1695,7 +1944,31 @@
     stopSprache();
   }
 
-  document.getElementById('suchOeffnen').addEventListener('click', oeffneSuche);
+  document.getElementById('suchOeffnen').addEventListener('click', function(){
+    oeffneSuche();
+    // Mikrofon sofort starten
+    setTimeout(function(){
+      var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SpeechRec) return;
+      if(recognition) stopSprache();
+      recognition = new SpeechRec();
+      recognition.lang = 'de-DE';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      var mic = document.getElementById('suchMic');
+      if(mic) mic.classList.add('hoeren');
+      document.getElementById('suchMicLabel').textContent = 'Höre …';
+      recognition.onresult = function(e){
+        var text = e.results[0][0].transcript;
+        document.getElementById('suchInput').value = text;
+        fuehreSucheAus(text);
+        stopSprache();
+      };
+      recognition.onerror = function(){ stopSprache(); };
+      recognition.onend = function(){ stopSprache(); };
+      recognition.start();
+    }, 200);
+  });
   document.getElementById('suchClose').addEventListener('click', schliesseSuche);
 
   // Texteingabe
@@ -1796,10 +2069,99 @@
   // ── SCHEIBCHEN 5 — Einstellungen ────────────────────────────────
   document.getElementById('zahnradBtn').addEventListener('click', function(){
     document.getElementById('einstellOverlay').classList.add('open');
+    var badge = document.getElementById('startpresetBadge');
+    if(badge) badge.textContent = aktivesPreset || '—';
+    var nbBadge = document.getElementById('nachBestaetigungBadge');
+    if(nbBadge) nbBadge.textContent = ladeNachBestaetigung() === 'kamera' ? 'Kamera offen' : 'Zurück zum Preset';
+    var lvBadge = document.getElementById('lensVorschlagBadge');
+    if(lvBadge){
+      var lv = ladeLensVorschlag();
+      lvBadge.textContent = lv === 'vollname' ? 'Vollname' : lv === 'kategorie' ? 'Nur Kategorie' : 'Nicht übernehmen';
+    }
+  });
+
+  document.getElementById('nachBestaetigungRow').addEventListener('click', function(){
+    var aktuell = ladeNachBestaetigung();
+    var neu = aktuell === 'kamera' ? 'preset' : 'kamera';
+    speichereNachBestaetigung(neu);
+    document.getElementById('nachBestaetigungBadge').textContent = neu === 'kamera' ? 'Kamera offen' : 'Zurück zum Preset';
+  });
+
+  document.getElementById('lensVorschlagRow').addEventListener('click', function(){
+    var reihenfolge = ['vollname', 'kategorie', 'leer'];
+    var aktuell = ladeLensVorschlag();
+    var idx = reihenfolge.indexOf(aktuell);
+    var neu = reihenfolge[(idx + 1) % reihenfolge.length];
+    speichereLensVorschlag(neu);
+    var labels = { vollname: 'Vollname', kategorie: 'Nur Kategorie', leer: 'Nicht übernehmen' };
+    document.getElementById('lensVorschlagBadge').textContent = labels[neu];
+  });
+
+  document.getElementById('resetDatenBtn').addEventListener('click', function(){
+    var label = this.querySelector('.einstell-row-label');
+    var arrow = this.querySelector('.einstell-row-arrow');
+    label.textContent = '✓ Daten gelöscht';
+    label.style.color = '#3aad52';
+    arrow.style.color = '#3aad52';
+    setTimeout(function(){
+      try{
+        localStorage.removeItem('kariorg_marker');
+        localStorage.removeItem('kariorg_startpreset');
+        localStorage.removeItem('kariorg_nach_bestaetigung');
+        localStorage.removeItem('kariorg_lens_vorschlag');
+      } catch(e){}
+      markerSpeicher.length = 0;
+      aktivesPreset = 'Aquarium';
+      document.querySelector('.preset-name').textContent = 'Aquarium';
+      document.getElementById('einstellOverlay').classList.remove('open');
+      renderListe();
+      switchTab('home');
+    }, 900);
   });
   document.getElementById('einstellClose').addEventListener('click', function(){
     document.getElementById('einstellOverlay').classList.remove('open');
   });
+
+  // ── KI-Scanner Verhalten ────────────────────────────────────────
+  var kiVerhalten = 'bestaetigen'; // Standard: Vorschlag bestätigen
+
+  // ── Drum-Picker Logik
+  (function(){
+    var drum = document.getElementById('kiDrum');
+    if(!drum) return;
+    var items = drum.querySelectorAll('.ki-drum-item');
+    var itemH = 40;
+
+    // Padding-Elemente damit erstes und letztes Item mittig rasten
+    var padTop = document.createElement('div');
+    padTop.style.cssText = 'height:40px;flex-shrink:0;';
+    var padBot = document.createElement('div');
+    padBot.style.cssText = 'height:40px;flex-shrink:0;';
+    drum.insertBefore(padTop, drum.firstChild);
+    drum.appendChild(padBot);
+
+    function updateActive(){
+      var idx = Math.round(drum.scrollTop / itemH);
+      idx = Math.max(0, Math.min(idx, items.length - 1));
+      items.forEach(function(it, i){
+        it.classList.toggle('drum-active', i === idx);
+      });
+      kiVerhalten = items[idx].dataset.kiModus;
+    }
+
+    drum.addEventListener('scroll', updateActive);
+
+    // Tippen auf Item → scrollt es in die Mitte
+    items.forEach(function(it, i){
+      it.addEventListener('click', function(){
+        drum.scrollTo({ top: i * itemH, behavior: 'smooth' });
+      });
+    });
+
+    // Startzustand setzen
+    drum.scrollTop = 0;
+    updateActive();
+  })();
 
   // ── Ampel-Konfiguration — Tippen öffnet Eingabe
   document.getElementById('ampelGelbRow').addEventListener('click', function(){
@@ -1826,10 +2188,8 @@
     Array.from(scroll.children).forEach(function(el){
       if(el.id !== 'archivLeer') el.parentNode.removeChild(el);
     });
-    // Mock-Daten + Aquarium + echte Marker zusammenführen
+    // Mock-Daten + Aquarium + echte Marker zusammenführen — ungefiltert
     var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
-    // Nur aktives Preset
-    pool = pool.filter(function(m){ return m.preset === aktivesPreset; });
     if(filter){
       var fl = filter.toLowerCase();
       pool = pool.filter(function(m){
@@ -1928,6 +2288,36 @@
   setAppHeight();
   window.addEventListener('resize', setAppHeight);
   window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight, 100); });
+
+  // ── FÄLLIGKEITS-WÄCHTER ─────────────────────────────────────────────────
+  function pruefeWaechter(){
+    var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
+    var treffer = [];
+    pool.forEach(function(m){
+      var s = ampelStatus(m.naechsterService);
+      if(s && (s.symbol === '🔴' || s.symbol === '🟡')){
+        treffer.push({ name: m.name, ort: m.ort || '', status: s });
+      }
+    });
+    if(!treffer.length) return;
+    var liste = document.getElementById('waechterListe');
+    liste.innerHTML = '';
+    treffer.forEach(function(t){
+      var row = document.createElement('div');
+      row.className = 'waechter-row';
+      row.innerHTML =
+        '<div class="waechter-symbol">' + t.status.symbol + '</div>' +
+        '<div class="waechter-info">' +
+          '<div class="waechter-name">' + t.name + '</div>' +
+          '<div class="waechter-sub">' + (t.ort || '') + ' · ' + t.status.text + '</div>' +
+        '</div>';
+      liste.appendChild(row);
+    });
+    var ov = document.getElementById('waechterOverlay');
+    ov.classList.add('open');
+    ov.addEventListener('click', function(){ ov.classList.remove('open'); }, { once: true });
+  }
+  setTimeout(pruefeWaechter, 600);
 
   // ── LAGER-OVERLAY ────────────────────────────────────────────────────────
   function ortIcon(ort){
@@ -2072,30 +2462,33 @@
     });
   }
 
-  // Bestand-Kachel Event
-  var lagerCard = document.querySelector('.themen-card[data-preset="Bestand"]');
-  if(lagerCard){
-    lagerCard.addEventListener('click', function(e){
-      e.stopPropagation();
-      openLager();
-    });
-  }
-
   // Zarges-Kachel Event — öffnet Lager gefiltert auf Zarges-Boxen
   var zargesCard = document.querySelector('.themen-card[data-preset="Zarges"]');
   if(zargesCard){
     zargesCard.addEventListener('click', function(e){
       e.stopPropagation();
+      document.querySelectorAll('.themen-card').forEach(function(c){ c.classList.remove('active-preset'); });
+      zargesCard.classList.add('active-preset');
+      aktivesPreset = 'Zarges-Boxen';
+      speichereStartPreset('Zarges-Boxen');
+      document.querySelector('.preset-name').textContent = 'Zarges-Boxen';
       openLagerGefiltert('Zarges');
     });
   }
 
-  // Bestand-Zähler setzen
-  (function(){
-    var pool = mockDaten.concat(mockAquarium);
-    var el = document.getElementById('bestandCount');
-    if(el) el.textContent = pool.length + ' Einträge';
-  })();
+  // Aquarium-Kachel Event — öffnet Lager gefiltert auf Aquarien
+  var aquariumCard = document.querySelector('.themen-card[data-preset="Aquarium"]');
+  if(aquariumCard){
+    aquariumCard.addEventListener('click', function(e){
+      e.stopPropagation();
+      document.querySelectorAll('.themen-card').forEach(function(c){ c.classList.remove('active-preset'); });
+      aquariumCard.classList.add('active-preset');
+      aktivesPreset = 'Aquarium';
+      speichereStartPreset('Aquarium');
+      document.querySelector('.preset-name').textContent = 'Aquarium';
+      openLagerGefiltert('Aquarium');
+    });
+  }
 
 
   // ── KI-SCANNER DEMO-FLOW ─────────────────────────────────────────────────
@@ -2134,56 +2527,213 @@
 
 
 
-  var scannerBoxIdx = 0; // rotiert durch die Boxen für Demo
+  // ── KI-Scanner Demo-Objekt: Besteckschublade Küche
+  var kiDemoObjekt = {
+    foto: '🍴',
+    label: 'Besteckschublade · Küche',
+    erkannt: [
+      { emoji:'🔪', name:'Messer', anzahl:'×6' },
+      { emoji:'🍴', name:'Gabeln', anzahl:'×6' },
+      { emoji:'🥄', name:'Esslöffel', anzahl:'×4' },
+      { emoji:'🥄', name:'Teelöffel', anzahl:'×8' },
+      { emoji:'🍽️', name:'Salatbesteck Holz', anzahl:'×1 Set' }
+    ],
+    preset: 'Küche',
+    ort: 'Küche · Schublade Besteck'
+  };
 
   function startKiScanDemo(){
-    // Scan-Overlay aufbauen
+    var ex = document.getElementById('kiScanOverlay');
+    if(ex) ex.parentNode.removeChild(ex);
+
+    // ── Phase 1: Foto-Auslöser (Sucher-Ansicht)
+    var ov = document.createElement('div');
+    ov.id = 'kiScanOverlay';
+    ov.style.cssText = 'position:absolute;inset:0;z-index:50;background:rgba(10,24,40,0.97);border-radius:37px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;';
+
+    ov.innerHTML = ''
+      + '<div id="kiScanClose" style="position:absolute;top:16px;right:16px;font-size:16px;color:rgba(255,255,255,0.4);cursor:pointer;padding:8px;">✕</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.18em;">KI-SCANNER · AKTIV</div>'
+      + '<div id="kiViewfinder" style="width:200px;height:150px;border-radius:12px;border:2px solid rgba(224,64,64,0.5);position:relative;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);">'
+      +   '<div style="position:absolute;top:-2px;left:-2px;width:20px;height:20px;border-top:3px solid #E04040;border-left:3px solid #E04040;border-radius:4px 0 0 0;"></div>'
+      +   '<div style="position:absolute;top:-2px;right:-2px;width:20px;height:20px;border-top:3px solid #E04040;border-right:3px solid #E04040;border-radius:0 4px 0 0;"></div>'
+      +   '<div style="position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border-bottom:3px solid #E04040;border-left:3px solid #E04040;border-radius:0 0 0 4px;"></div>'
+      +   '<div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-bottom:3px solid #E04040;border-right:3px solid #E04040;border-radius:0 0 4px 0;"></div>'
+      +   '<div style="font-size:48px;opacity:0.25;">🍴</div>'
+      + '</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.1em;">Objekt ausrichten — dann aufnehmen</div>'
+      + '<div id="kiFotoBtn" style="width:56px;height:56px;border-radius:50%;border:3px solid #E04040;background:rgba(224,64,64,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;">'
+      +   '<div style="width:36px;height:36px;border-radius:50%;background:#E04040;"></div>'
+      + '</div>';
+
+    document.querySelector('.phone').appendChild(ov);
+
+    document.getElementById('kiScanClose').addEventListener('click', function(){
+      ov.parentNode.removeChild(ov);
+    });
+
+    // ── Foto-Button → Phase 2: Scan-Animation
+    document.getElementById('kiFotoBtn').addEventListener('click', function(){
+      kiZeigeScanAnimation(ov);
+    });
+  }
+
+  function kiZeigeScanAnimation(ov){
+    // Inhalt auf Scan-Ansicht wechseln
+    ov.innerHTML = ''
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.18em;">KI-SCANNER · ANALYSIERT</div>'
+      + '<div style="width:200px;height:150px;border-radius:12px;border:2px solid #E04040;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);">'
+      +   '<div style="font-size:48px;">🍴</div>'
+      +   '<div id="kiScanLine" style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#E04040,transparent);animation:kiScan 1s linear infinite;"></div>'
+      + '</div>'
+      + '<div id="kiScanStatus" style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:.12em;">SCANNE...</div>';
+
+    // CSS-Animation für Scan-Linie
+    if(!document.getElementById('kiScanStyle')){
+      var st = document.createElement('style');
+      st.id = 'kiScanStyle';
+      st.textContent = '@keyframes kiScan{0%{top:0}100%{top:100%}}';
+      document.head.appendChild(st);
+    }
+
+    setTimeout(function(){
+      document.getElementById('kiScanStatus').textContent = 'ERKENNE OBJEKTE...';
+    }, 500);
+    setTimeout(function(){
+      document.getElementById('kiScanStatus').textContent = 'KLASSIFIZIERE...';
+    }, 1000);
+    setTimeout(function(){
+      kiZeigeVorschlag(ov);
+    }, 1600);
+  }
+
+  function kiZeigeVorschlag(ov){
+    // Direkt-Modi: kein Bestätigungsschritt
+    if(kiVerhalten === 'direkt'){
+      kiAnlegen(ov, kiVerhalten);
+      return;
+    }
+    // ── Phase 3: KI-Ergebnis + Bestätigungs-Button
+    var liste = kiDemoObjekt.erkannt.map(function(o){
+      return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.07);">'
+        + '<span style="font-size:16px;">' + o.emoji + '</span>'
+        + '<span style="font-family:\'DM Sans\',sans-serif;font-size:13px;color:rgba(255,255,255,0.85);flex:1;">' + o.name + '</span>'
+        + '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:#F5C840;">' + o.anzahl + '</span>'
+        + '</div>';
+    }).join('');
+
+    ov.innerHTML = ''
+      + '<div id="kiScanClose2" style="position:absolute;top:16px;right:16px;font-size:16px;color:rgba(255,255,255,0.4);cursor:pointer;padding:8px;">✕</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.18em;margin-bottom:4px;">KI ERKANNT</div>'
+      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:15px;font-weight:700;color:#F5C840;margin-bottom:10px;">' + kiDemoObjekt.label + '</div>'
+      + '<div style="width:240px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 14px;">' + liste + '</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.08em;margin-top:4px;">Preset: ' + kiDemoObjekt.preset + ' · ' + kiDemoObjekt.ort + '</div>'
+      + '<div id="kiBestaetigenBtn" style="margin-top:8px;padding:11px 32px;border-radius:22px;background:#E04040;color:#fff;font-family:\'DM Sans\',sans-serif;font-size:14px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">Anlegen</div>';
+
+    document.getElementById('kiScanClose2').addEventListener('click', function(){
+      ov.parentNode.removeChild(ov);
+    });
+
+    document.getElementById('kiBestaetigenBtn').addEventListener('click', function(){
+      kiAnlegen(ov, kiVerhalten);
+    });
+  }
+
+  function kiAnlegen(ov, modus){
+    var zielPreset = aktivesPreset || 'Bestand';
+    var heute = new Date().toISOString().slice(0,10);
+    kiDemoObjekt.erkannt.forEach(function(o){
+      markerSpeicher.push({
+        name: o.name + ' ' + o.anzahl,
+        art: 'Haushalt',
+        ort: kiDemoObjekt.ort,
+        preset: zielPreset,
+        datum: heute,
+        notiz: 'KI-Scanner · ' + kiDemoObjekt.label,
+        naechsterService: null,
+        serienNr: null,
+        letzterService: heute,
+        foto: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%231B3A57"/><text x="20" y="26" font-size="18" text-anchor="middle">' + o.emoji + '</text></svg>'
+      });
+    });
+    speichereInStorage();
+    ov.parentNode.removeChild(ov);
+    // Kurze Bestätigung
+    var info = document.createElement('div');
+    info.style.cssText = 'position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:#E04040;color:#fff;font-family:\'DM Sans\',sans-serif;font-size:12px;font-weight:700;padding:8px 18px;border-radius:16px;z-index:60;white-space:nowrap;';
+    info.textContent = '5 Einträge angelegt ✓';
+    document.querySelector('.phone').appendChild(info);
+    setTimeout(function(){ if(info.parentNode) info.parentNode.removeChild(info); }, 2000);
+  }
+
+  // ── Zarges-Box-Scan: Demo-Flow ────────────────────────────────────
+  var zargesDemoBox = { nr: 14, label: 'Zarges-Box 14', ortKey: 'Garage · Zarges-Box 14', kategorie: 'Skiausrüstung', emoji: '⛷️' };
+
+  function startZargesScanDemo(){
     var ex = document.getElementById('kiScanOverlay');
     if(ex) ex.parentNode.removeChild(ex);
 
     var ov = document.createElement('div');
     ov.id = 'kiScanOverlay';
-    ov.style.cssText = 'position:absolute;inset:0;z-index:50;background:rgba(14,34,54,0.96);border-radius:37px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;';
+    ov.style.cssText = 'position:absolute;inset:0;z-index:50;background:rgba(10,24,40,0.97);border-radius:37px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;';
 
-    ov.innerHTML = '<div style="width:160px;height:160px;border-radius:16px;border:2px solid #E04040;position:relative;display:flex;align-items:center;justify-content:center;">'
-      + '<div style="position:absolute;top:-2px;left:-2px;width:24px;height:24px;border-top:3px solid #F5C840;border-left:3px solid #F5C840;border-radius:4px 0 0 0;"></div>'
-      + '<div style="position:absolute;top:-2px;right:-2px;width:24px;height:24px;border-top:3px solid #F5C840;border-right:3px solid #F5C840;border-radius:0 4px 0 0;"></div>'
-      + '<div style="position:absolute;bottom:-2px;left:-2px;width:24px;height:24px;border-bottom:3px solid #F5C840;border-left:3px solid #F5C840;border-radius:0 0 0 4px;"></div>'
-      + '<div style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-bottom:3px solid #F5C840;border-right:3px solid #F5C840;border-radius:0 0 4px 0;"></div>'
-      + '<div style="font-family:\'DM Mono\',monospace;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:.15em;text-align:center;">ZARGES<br>BOX</div>'
+    ov.innerHTML = ''
+      + '<div id="zargeScanClose" style="position:absolute;top:16px;right:16px;font-size:16px;color:rgba(255,255,255,0.4);cursor:pointer;padding:8px;">✕</div>'
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.18em;">KI-SCANNER · AKTIV</div>'
+      + '<div id="zargeViewfinder" style="width:200px;height:150px;border-radius:12px;border:2px solid rgba(224,64,64,0.5);position:relative;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);">'
+      +   '<div style="position:absolute;top:-2px;left:-2px;width:20px;height:20px;border-top:3px solid #E04040;border-left:3px solid #E04040;border-radius:4px 0 0 0;"></div>'
+      +   '<div style="position:absolute;top:-2px;right:-2px;width:20px;height:20px;border-top:3px solid #E04040;border-right:3px solid #E04040;border-radius:0 4px 0 0;"></div>'
+      +   '<div style="position:absolute;bottom:-2px;left:-2px;width:20px;height:20px;border-bottom:3px solid #E04040;border-left:3px solid #E04040;border-radius:0 0 0 4px;"></div>'
+      +   '<div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-bottom:3px solid #E04040;border-right:3px solid #E04040;border-radius:0 0 4px 0;"></div>'
+      +   '<div style="font-family:\'DM Mono\',monospace;font-size:52px;font-weight:900;color:rgba(255,255,255,0.18);line-height:1;">14</div>'
       + '</div>'
-      + '<div id="kiScanStatus" style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:.12em;">SCANNE...</div>'
-      + '<div id="kiScanResult" style="display:none;text-align:center;">'
-      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.15em;margin-bottom:6px;">KI ERKANNT</div>'
-      + '<div id="kiScanLabel" style="font-size:20px;font-weight:700;color:#F5C840;"></div>'
-      + '</div>'
-      + '<div id="kiScanClose" style="position:absolute;top:16px;right:16px;font-size:16px;color:rgba(255,255,255,0.4);cursor:pointer;padding:6px;">✕</div>';
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.1em;">Box ausrichten — dann aufnehmen</div>'
+      + '<div id="zargeBtn" style="width:56px;height:56px;border-radius:50%;border:3px solid #E04040;background:rgba(224,64,64,0.15);display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;">'
+      +   '<div style="width:36px;height:36px;border-radius:50%;background:#E04040;"></div>'
+      + '</div>';
 
     document.querySelector('.phone').appendChild(ov);
-    document.getElementById('kiScanClose').addEventListener('click', function(){
-      ov.parentNode.removeChild(ov);
+
+    document.getElementById('zargeScanClose').addEventListener('click', function(){ ov.parentNode.removeChild(ov); });
+    document.getElementById('zargeBtn').addEventListener('click', function(){ zargeZeigeScanAnimation(ov); });
+  }
+
+  function zargeZeigeScanAnimation(ov){
+    ov.innerHTML = ''
+      + '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:#E04040;letter-spacing:.18em;">KI-SCANNER · LIEST NUMMER</div>'
+      + '<div style="width:200px;height:150px;border-radius:12px;border:2px solid #E04040;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);">'
+      +   '<div style="font-family:\'DM Mono\',monospace;font-size:52px;font-weight:900;color:rgba(255,255,255,0.35);line-height:1;">14</div>'
+      +   '<div id="zargeKiScanLine" style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#E04040,transparent);animation:kiScan 1s linear infinite;"></div>'
+      + '</div>'
+      + '<div id="zargeKiStatus" style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:.12em;">SCANNE...</div>';
+
+    if(!document.getElementById('kiScanStyle')){
+      var st = document.createElement('style');
+      st.id = 'kiScanStyle';
+      st.textContent = '@keyframes kiScan{0%{top:0}100%{top:100%}}';
+      document.head.appendChild(st);
+    }
+
+    setTimeout(function(){ document.getElementById('zargeKiStatus').textContent = 'ERKENNE BESCHRIFTUNG...'; }, 500);
+    setTimeout(function(){ document.getElementById('zargeKiStatus').textContent = 'LESE NUMMER...'; }, 1000);
+    setTimeout(function(){ zargeZeigeErgebnis(ov); }, 1600);
+  }
+
+  function zargeZeigeErgebnis(ov){
+    var pool = mockDaten.concat(mockAquarium).concat(markerSpeicher.slice());
+    var items = pool.filter(function(m){ return (m.ort||'').indexOf(zargesDemoBox.label) !== -1; });
+    var orteMap = {};
+    pool.forEach(function(m){
+      var segs = (m.ort||'').split('·').map(function(s){ return s.trim(); });
+      var ortKey = segs.slice(0,2).join(' · ');
+      if(!ortKey) return;
+      if(!orteMap[ortKey]) orteMap[ortKey] = [];
+      orteMap[ortKey].push(m);
     });
+    var orte = Object.keys(orteMap).filter(function(o){ return o.toLowerCase().indexOf('zarges') !== -1; }).sort();
 
-    // Scan-Animation: 1.2s scannen → Erkennung zeigen → 0.8s warten → Inhalt öffnen
-    var box = scannerBoxen[scannerBoxIdx % scannerBoxen.length];
-    scannerBoxIdx++;
-
-    setTimeout(function(){
-      document.getElementById('kiScanStatus').textContent = 'ANALYSIERE...';
-    }, 400);
-
-    setTimeout(function(){
-      document.getElementById('kiScanStatus').style.display = 'none';
-      var res = document.getElementById('kiScanResult');
-      res.style.display = 'block';
-      document.getElementById('kiScanLabel').textContent = box.label;
-    }, 1200);
-
-    setTimeout(function(){
-      ov.parentNode.removeChild(ov);
-      // Inhalt der erkannten Box öffnen
-      oeffneBoxInhalt(box);
-    }, 2200);
+    ov.parentNode.removeChild(ov);
+    renderLagerEintraege(zargesDemoBox.ortKey, items, orte, orteMap);
   }
 
   function oeffneBoxInhalt(box){
@@ -2215,7 +2765,8 @@
     origScanBtn.addEventListener('click', function(e){
       if(aktModus === 'ai'){
         e.stopPropagation();
-        startKiScanDemo();
+        // Zarges-Box-Erkennung ist der primäre Demo-Scan
+        startZargesScanDemo();
         return;
       }
       if(aktModus === 'lens'){
